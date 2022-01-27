@@ -18,14 +18,14 @@ To test endpoints feel free to use any of rest client tools
 * Apply Recommendations                          POST: `api/v1/campaign/optimisations/{optimisationId}/recommendations`
 
 ### Open Api Documentation page
--http://localhost:8888/swagger-ui/index.html#/
+* http://localhost:8888/swagger-ui/index.html#/
 
 # Run Application
 - /scripts/run.sh run from terminal or from IDEA and open in browser http://localhost:8888
 
 # References
 - Thanks [walshdanny](https://github.com/walshdanny700/campaign_optimisation) for invented Bike to 
-- * [How do I apply recommendations?](https://help.optily.app/en/articles/4550288-how-do-i-apply-recommendations)
+- [How do I apply recommendations?](https://help.optily.app/en/articles/4550288-how-do-i-apply-recommendations)
 
 # Nice To have
 - Batch support (need to add sequence generation for id's :)
