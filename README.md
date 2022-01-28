@@ -22,8 +22,9 @@ Please use open API client for reaching endpoints. Information defined in sectio
 ### Open Api Documentation page
 * http://localhost:8888/swagger-ui/index.html#/
 
-# Run Application
-- /scripts/run.sh run from terminal or from IDEA and open in browser http://localhost:8888
+# How to Run
+- /scripts/run.sh running the application from terminal or from IDEA and open in browser http://localhost:8888
+- /scripts/run-tests.sh running all existing and enabled tests
 
 # References
 - Many Thanks to [walshdanny](https://github.com/walshdanny700/campaign_optimisation) and his invented bicycle for reuse
