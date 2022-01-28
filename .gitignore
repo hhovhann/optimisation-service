@@ -1,6 +1,4 @@
 HELP.md
-/data/campaigns.csv
-/data/Optily project challenge.pdf
 design
 target/
 !.mvn/wrapper/maven-wrapper.jar
