@@ -8,7 +8,6 @@ import com.hhovhann.optimisationservice.service.CampaignGroupService;
 import com.hhovhann.optimisationservice.service.CampaignService;
 import com.hhovhann.optimisationservice.service.OptimisationService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.*;
@@ -18,6 +17,7 @@ import java.util.Map;
 import java.util.Optional;
 
 import static com.hhovhann.optimisationservice.model.entity.OptimisationStatus.APPLIED;
+import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 @RestController
 @RequestMapping(value = "api/v1/campaign/")
@@ -38,7 +38,7 @@ public class CampaignGroupController {
 
 
     @ResponseBody
-    @GetMapping(value = "/campaigngroups", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = "/campaigngroups", produces = APPLICATION_JSON_VALUE)
     public ResponseEntity<List<CampaignGroup>> retrieveAllCampaignGroups() {
         List<CampaignGroup> campaignGroups = campaignGroupService.findAllCampaignGroups();
 
@@ -47,7 +47,7 @@ public class CampaignGroupController {
     }
 
     @ResponseBody
-    @GetMapping(value = "/campaigngroups/{campaignGroupId}/campaigns", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = "/campaigngroups/{campaignGroupId}/campaigns", produces = APPLICATION_JSON_VALUE)
     public ResponseEntity<List<Campaign>> retrieveAllCampaignsForCampaignGroup(@PathVariable Long campaignGroupId) {
         List<Campaign> campaigns = campaignService.getCampaignsForCampaignGroup(campaignGroupId);
 
@@ -55,7 +55,7 @@ public class CampaignGroupController {
     }
 
     @ResponseBody
-    @GetMapping(value = "/campaigngroups/{campaignGroupId}/optimisations", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = "/campaigngroups/{campaignGroupId}/optimisations", produces = APPLICATION_JSON_VALUE)
     public ResponseEntity<Optimisation> retrieveLatestOptimisationForCampaignGroup(@PathVariable Long campaignGroupId) {
         Optional<Optimisation> optimisation = this.optimisationService.getLatestOptimisationForCampaignGroup(campaignGroupId);
 
@@ -63,7 +63,7 @@ public class CampaignGroupController {
     }
 
     @ResponseBody
-    @GetMapping(value = "/optimisations/{optimisationId}/recommendations", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = "/optimisations/{optimisationId}/recommendations", produces = APPLICATION_JSON_VALUE)
     public ResponseEntity<List<Recommendation>> retrieveLatestRecommendationsForOptimisation(@PathVariable Long optimisationId) {
         List<Recommendation> recommendations = this.optimisationService.getLatestRecommendations(optimisationId);
 
@@ -71,7 +71,7 @@ public class CampaignGroupController {
     }
 
     @ResponseBody
-    @PostMapping(value = "/optimisations/{optimisationId}/recommendations", produces = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(value = "/optimisations/{optimisationId}/recommendations", produces = APPLICATION_JSON_VALUE)
     public ResponseEntity<Map<String, String>> applyLatestRecommendation(@PathVariable Long optimisationId) {
         Optional<Optimisation> optimisation = optimisationService.getOptimisation(optimisationId);
 
@@ -84,6 +84,6 @@ public class CampaignGroupController {
         List<Recommendation> recommendations = this.optimisationService.getLatestRecommendations(optimisationId);
         var rowsUpdated = this.optimisationService.applyRecommendations(recommendations, optimisation.get());
 
-        return ResponseEntity.ok().body(Map.of("message", "Updated Campaigns: " + rowsUpdated));
+        return ResponseEntity.ok().body(Map.of("message", "Updated Campaigns " + rowsUpdated));
     }
 }
