@@ -1,5 +1,6 @@
-# optimisation-service
-Optimizations Service Project
+# Description
+Optimizations Service system is takes a group of campaigns, associated within a campaign group, and performs an optimisation on them based on some
+criteria
 
 # Tech Stack
 * Java 17
