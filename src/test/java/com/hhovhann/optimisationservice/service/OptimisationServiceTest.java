@@ -4,15 +4,17 @@ import com.hhovhann.optimisationservice.model.entity.Campaign;
 import com.hhovhann.optimisationservice.model.entity.CampaignGroup;
 import com.hhovhann.optimisationservice.model.entity.Optimisation;
 import com.hhovhann.optimisationservice.model.entity.Recommendation;
+import com.hhovhann.optimisationservice.repository.CampaignRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.List;
 
 import static com.hhovhann.optimisationservice.model.entity.OptimisationStatus.NOT_APPLIED;
@@ -22,6 +24,9 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 class OptimisationServiceTest {
     @Autowired
     private OptimisationService optimisationService;
+
+    @MockBean
+    CampaignRepository campaignRepository;
 
     private Optimisation optimisation;
     private Recommendation recommendation_1, recommendation_2, recommendation_3, recommendation_4, recommendation_5, recommendation_6, recommendation_7, recommendation_8, recommendation_9, recommendation_10, recommendation_11;
@@ -139,20 +144,27 @@ class OptimisationServiceTest {
     @Order(3)
     @DisplayName("Retrieve all recommendations when optimisation status not applied")
     void givenRecommendations_whenGetLatestRecommendations_thenReturnAllRecommendations() {
-        List<Recommendation> expectedRecommendations = List.of(this.recommendation_1, this.recommendation_2, this.recommendation_3, this.recommendation_4, this.recommendation_5, this.recommendation_6, this.recommendation_7, this.recommendation_8, this.recommendation_9, this.recommendation_10, this.recommendation_11);
+        List<Recommendation> expectedRecommendations = List.of(this.recommendation_1, this.recommendation_2);
+        Mockito.when(this.campaignRepository.findByCampaignGroupId(optimisation.getCampaignGroupId())).thenReturn(List.of(this.campaign_1, this.campaign_2));
 
         List<Recommendation> actualRecommendations = this.optimisationService.getLatestRecommendations(this.optimisation.getId());
 
         assertEquals(expectedRecommendations.size(), actualRecommendations.size());
+
+        assertEquals(expectedRecommendations.get(0).getCampaignId(), actualRecommendations.get(0).getCampaignId());
+        assertEquals(expectedRecommendations.get(0).getOptimisationId(), actualRecommendations.get(0).getOptimisationId());
+        assertEquals(expectedRecommendations.get(0).getRecommendedBudget(), actualRecommendations.get(0).getRecommendedBudget());
+
+        assertEquals(expectedRecommendations.get(1).getCampaignId(), actualRecommendations.get(1).getCampaignId());
+        assertEquals(expectedRecommendations.get(1).getOptimisationId(), actualRecommendations.get(1).getOptimisationId());
+        assertEquals(expectedRecommendations.get(1).getRecommendedBudget(), actualRecommendations.get(1).getRecommendedBudget());
     }
 
     @Test
     @Order(4)
     @DisplayName("Updated raws by count of given recommendations when optimisation status not applied")
     void givenRecommendations_whenApplyLatestRecommendations_thenReturnUpdatedRaws() {
-        List<Recommendation> expectedRecommendations = new ArrayList<>();
-        expectedRecommendations.add(this.recommendation_1);
-        expectedRecommendations.add(this.recommendation_2);
+        List<Recommendation> expectedRecommendations = List.of(this.recommendation_1, this.recommendation_2);
 
         int updatedRaws = this.optimisationService.applyRecommendations(expectedRecommendations, this.optimisation);
 
