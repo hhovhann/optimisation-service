@@ -2,6 +2,7 @@ package com.hhovhann.optimisationservice.service;
 
 import com.hhovhann.optimisationservice.model.entity.*;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -66,36 +67,14 @@ class OptimisationServiceTest {
     }
 
     @Test
-    void getOptimisation() {
-    }
+    @DisplayName("Updated raws by count of given recommendations when optimisation status not applied")
+    void givenRecommendations_whenApplyLatestRecommendations_thenReturnUpdatedRaws() {
+        List<Recommendation> expectedRecommendations = new ArrayList<>();
+        expectedRecommendations.add(this.recommendationOne);
+        expectedRecommendations.add(this.recommendationTwo);
 
-    @Test
-    void getLatestOptimisationForCampaignGroup() {
-    }
+        int updatedRaws = this.optimisationService.applyRecommendations(expectedRecommendations, this.optimisation);
 
-    @Test // givenCampaigns_whenGenerateLatestRecommendations_thenReturnRecommendations
-    void getLatestRecommendations() {
-//        List<Campaign> campaigns = new ArrayList<>();
-//        campaigns.add(this.campaignOne);
-//        campaigns.add(this.campaignTwo);
-//
-//        List<Recommendation> expectedRecommendations = new ArrayList<>();
-//        expectedRecommendations.add(this.recommendationOne);
-//        expectedRecommendations.add(this.recommendationTwo);
-//
-//
-//        List<Recommendation> outputRecommendations = this.optimisationService.applyRecommendations(campaigns, this.optimisation);
-//        assertEquals(outputRecommendations.size(), expectedRecommendations.size());
-//        assertEquals(outputRecommendations.get(0).getRecommendedBudget(), expectedRecommendations.get(0).getRecommendedBudget());
-//        assertEquals(outputRecommendations.get(0).getOptimisationId(), expectedRecommendations.get(0).getOptimisationId());
-//        assertEquals(outputRecommendations.get(0).getCampaignId(), expectedRecommendations.get(0).getCampaignId());
-//
-//        assertEquals(outputRecommendations.get(1).getRecommendedBudget(), expectedRecommendations.get(1).getRecommendedBudget());
-//        assertEquals(outputRecommendations.get(1).getOptimisationId(), expectedRecommendations.get(1).getOptimisationId());
-//        assertEquals(outputRecommendations.get(1).getCampaignId(), expectedRecommendations.get(1).getCampaignId());
-    }
-
-    @Test
-    void applyRecommendations() {
+        assertEquals(updatedRaws, expectedRecommendations.size());
     }
 }

@@ -7,6 +7,7 @@ import com.hhovhann.optimisationservice.repository.CampaignRepository;
 import com.hhovhann.optimisationservice.repository.OptimisationRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
 import javax.transaction.Transactional;
 import java.math.BigDecimal;
 import java.util.Collections;
@@ -27,8 +28,7 @@ public class OptimisationServiceImpl implements OptimisationService {
     private final CampaignService campaignService;
 
     @Autowired
-    public OptimisationServiceImpl(OptimisationRepository optimisationRepository,
-                                   CampaignRepository campaignRepository, RecommendationService recommendationService, CampaignService campaignService) {
+    public OptimisationServiceImpl(OptimisationRepository optimisationRepository, CampaignRepository campaignRepository, RecommendationService recommendationService, CampaignService campaignService) {
         this.optimisationRepository = optimisationRepository;
         this.campaignRepository = campaignRepository;
         this.recommendationService = recommendationService;
@@ -65,14 +65,7 @@ public class OptimisationServiceImpl implements OptimisationService {
         double impressions = campaign.stream().mapToDouble(Campaign::getImpressions).sum();
         BigDecimal budgets = campaign.stream().map(Campaign::getBudget).reduce(BigDecimal.ZERO, BigDecimal::add);
 
-        return campaign
-                .stream()
-                .map(currentCampaign -> Recommendation.builder()
-                        .campaignId(currentCampaign.getId())
-                        .optimisationId(optimisation.getId())
-                        .recommendedBudget(budgets.multiply(BigDecimal.valueOf(currentCampaign.getImpressions() / impressions)))
-                        .build())
-                .collect(Collectors.toList());
+        return campaign.stream().map(currentCampaign -> Recommendation.builder().campaignId(currentCampaign.getId()).optimisationId(optimisation.getId()).recommendedBudget(budgets.multiply(BigDecimal.valueOf(currentCampaign.getImpressions() / impressions))).build()).collect(Collectors.toList());
     }
 
     @Override
@@ -83,10 +76,13 @@ public class OptimisationServiceImpl implements OptimisationService {
 
         recommendationService.storeRecommendations(recommendations);
 
-        optimisation.setStatus(APPLIED);
-
-        this.optimisationRepository.save(optimisation);
+        storeOptimisationStatus(optimisation);
 
         return rowsUpdated.get();
+    }
+
+    private void storeOptimisationStatus(Optimisation optimisation) {
+        optimisation.setStatus(APPLIED);
+        this.optimisationRepository.save(optimisation);
     }
 }
