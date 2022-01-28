@@ -1,6 +1,5 @@
 # Description
-Optimizations Service system is takes a group of campaigns, associated within a campaign group, and performs an optimisation on them based on some
-criteria
+Optimizations Service system is takes a group of campaigns, associated within a campaign group, and performs an optimisation on them based on some criteria
 
 # Tech Stack
 * Java 17
@@ -248,7 +247,7 @@ Response Body
 
 Feel free if you want to use [OpenAPI Client](http://localhost:8888/swagger-ui/index.html#/) for testing endpoints. Information defined in section bellow
 
-# How to run appliciation and tests
+# How to run application and tests
 - /scripts/run.sh running the application from terminal or from IDEA and open in browser http://localhost:8888
 - /scripts/run-tests.sh running all existing and enabled tests
 
