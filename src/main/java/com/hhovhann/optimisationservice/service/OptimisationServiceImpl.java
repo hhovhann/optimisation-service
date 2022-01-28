@@ -7,7 +7,6 @@ import com.hhovhann.optimisationservice.repository.CampaignRepository;
 import com.hhovhann.optimisationservice.repository.OptimisationRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
 import javax.transaction.Transactional;
 import java.math.BigDecimal;
 import java.util.Collections;
@@ -38,12 +37,12 @@ public class OptimisationServiceImpl implements OptimisationService {
 
 
     @Override
-    public Optional<Optimisation> getOptimisationByOptimisationId(Long optimisationId) {
+    public Optional<Optimisation> getOptimisation(Long optimisationId) {
         return optimisationRepository.findById(optimisationId);
     }
 
     @Override
-    public Optional<Optimisation> getLatestOptimisation(Long campaignGroupId) {
+    public Optional<Optimisation> getLatestOptimisationForCampaignGroup(Long campaignGroupId) {
         List<Optimisation> optimisations = optimisationRepository.findByCampaignGroupIdOrderByIdDesc(campaignGroupId);
         return Optional.of(optimisations.get(0));
     }
@@ -63,15 +62,15 @@ public class OptimisationServiceImpl implements OptimisationService {
     }
 
     public List<Recommendation> generateLatestRecommendations(List<Campaign> campaign, Optimisation optimisation) {
-        final double impressions = campaign.stream().mapToDouble(Campaign::getImpressions).sum();
-        final BigDecimal totalBudget = campaign.stream().map(Campaign::getBudget).reduce(BigDecimal.ZERO, BigDecimal::add);
+        double impressions = campaign.stream().mapToDouble(Campaign::getImpressions).sum();
+        BigDecimal budgets = campaign.stream().map(Campaign::getBudget).reduce(BigDecimal.ZERO, BigDecimal::add);
 
         return campaign
                 .stream()
-                .map(c -> Recommendation.builder()
-                        .campaignId(c.getId())
+                .map(currentCampaign -> Recommendation.builder()
+                        .campaignId(currentCampaign.getId())
                         .optimisationId(optimisation.getId())
-                        .recommendedBudget(totalBudget.multiply(BigDecimal.valueOf(c.getImpressions() / impressions)))
+                        .recommendedBudget(budgets.multiply(BigDecimal.valueOf(currentCampaign.getImpressions() / impressions)))
                         .build())
                 .collect(Collectors.toList());
     }

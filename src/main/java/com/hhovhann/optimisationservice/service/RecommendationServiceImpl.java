@@ -15,6 +15,11 @@ public class RecommendationServiceImpl implements RecommendationService {
     }
 
     @Override
+    public List<Recommendation> getRecommendations(Long optimisationId) {
+        return recommendationRepository.findByOptimisationId(optimisationId);
+    }
+
+    @Override
     public void storeRecommendations(List<Recommendation> recommendations) {
         this.recommendationRepository.saveAll(recommendations);
     }

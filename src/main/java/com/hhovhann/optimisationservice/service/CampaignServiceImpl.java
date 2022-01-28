@@ -15,7 +15,7 @@ public class CampaignServiceImpl implements CampaignService {
     }
 
     @Override
-    public List<Campaign> getCampaignsForGroup(Long campaignGroupId) {
+    public List<Campaign> getCampaignsForCampaignGroup(Long campaignGroupId) {
         return campaignRepository.findByCampaignGroupId(campaignGroupId);
     }
 

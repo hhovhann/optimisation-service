@@ -7,9 +7,9 @@ import com.hhovhann.optimisationservice.model.entity.Recommendation;
 
 public interface OptimisationService {
 
-    Optional<Optimisation> getOptimisationByOptimisationId(Long optimisationId);
+    Optional<Optimisation> getOptimisation(Long optimisationId);
 
-    Optional<Optimisation> getLatestOptimisation(Long campaignGroupId);
+    Optional<Optimisation> getLatestOptimisationForCampaignGroup(Long campaignGroupId);
 
     List<Recommendation> getLatestRecommendations(Long optimisationId);
 

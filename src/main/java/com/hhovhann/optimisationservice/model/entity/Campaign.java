@@ -31,12 +31,12 @@ public class Campaign {
     @Column(name="ID")
     Long id;
 
+    @JoinColumn(name = "CAMPAIGN_GROUP_ID", referencedColumnName = "ID")
+    Long campaignGroupId;
+
     @NonNull
     @Column(name="NAME", length=200)
     String name;
-
-    @JoinColumn(name = "CAMPAIGN_GROUP_ID", referencedColumnName = "ID")
-    Long campaignGroupId;
 
     @NonNull
     @Column(name="BUDGET")

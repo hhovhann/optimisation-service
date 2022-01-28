@@ -8,9 +8,11 @@ import com.hhovhann.optimisationservice.service.CampaignGroupService;
 import com.hhovhann.optimisationservice.service.CampaignService;
 import com.hhovhann.optimisationservice.service.OptimisationService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.*;
+
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -36,8 +38,8 @@ public class CampaignGroupController {
 
 
     @ResponseBody
-    @GetMapping(value = "/campaigngroups", headers = {"Content-Type: application/json; charset=utf-8"})
-    public ResponseEntity<List<CampaignGroup>> getCampaignGroups() {
+    @GetMapping(value = "/campaigngroups", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<List<CampaignGroup>> retrieveAllCampaignGroups() {
         List<CampaignGroup> campaignGroups = campaignGroupService.findAllCampaignGroups();
 
         return CollectionUtils.isEmpty(campaignGroups) ? ResponseEntity.notFound().build()
@@ -45,33 +47,33 @@ public class CampaignGroupController {
     }
 
     @ResponseBody
-    @GetMapping(value = "/campaigngroups/{campaignGroupId}/campaigns", headers = {"Content-Type: application/json; charset=utf-8"})
-    public ResponseEntity<List<Campaign>> getCampaignsForGroup(@PathVariable Long campaignGroupId) {
-        List<Campaign> campaigns = campaignService.getCampaignsForGroup(campaignGroupId);
+    @GetMapping(value = "/campaigngroups/{campaignGroupId}/campaigns", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<List<Campaign>> retrieveAllCampaignsForCampaignGroup(@PathVariable Long campaignGroupId) {
+        List<Campaign> campaigns = campaignService.getCampaignsForCampaignGroup(campaignGroupId);
 
         return campaigns.isEmpty() ? ResponseEntity.notFound().build() : ResponseEntity.ok().body(campaigns);
     }
 
     @ResponseBody
-    @GetMapping(value = "/campaigngroups/{campaignGroupId}/optimisations", headers = {"Content-Type: application/json; charset=utf-8"})
-    public ResponseEntity<Optimisation> getOptimisationForGroup(@PathVariable Long campaignGroupId) {
-        Optional<Optimisation> optimisation = this.optimisationService.getLatestOptimisation(campaignGroupId);
+    @GetMapping(value = "/campaigngroups/{campaignGroupId}/optimisations", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Optimisation> retrieveLatestOptimisationForCampaignGroup(@PathVariable Long campaignGroupId) {
+        Optional<Optimisation> optimisation = this.optimisationService.getLatestOptimisationForCampaignGroup(campaignGroupId);
 
         return optimisation.isEmpty() ? ResponseEntity.notFound().build() : ResponseEntity.ok().body(optimisation.get());
     }
 
     @ResponseBody
-    @GetMapping(value = "/optimisations/{optimisationId}/recommendations", headers = {"Content-Type: application/json; charset=utf-8"})
-    public ResponseEntity<List<Recommendation>> getRecommendationsForOptimisation(@PathVariable Long optimisationId) {
+    @GetMapping(value = "/optimisations/{optimisationId}/recommendations", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<List<Recommendation>> retrieveLatestRecommendationsForOptimisation(@PathVariable Long optimisationId) {
         List<Recommendation> recommendations = this.optimisationService.getLatestRecommendations(optimisationId);
 
         return recommendations.isEmpty() ? ResponseEntity.notFound().build() : ResponseEntity.ok().body(recommendations);
     }
 
     @ResponseBody
-    @PostMapping(value = "/optimisations/{optimisationId}/recommendations", headers = {"Content-Type: application/json; charset=utf-8"})
+    @PostMapping(value = "/optimisations/{optimisationId}/recommendations", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Map<String, String>> applyLatestRecommendation(@PathVariable Long optimisationId) {
-        Optional<Optimisation> optimisation = optimisationService.getOptimisationByOptimisationId(optimisationId);
+        Optional<Optimisation> optimisation = optimisationService.getOptimisation(optimisationId);
 
         if (optimisation.isEmpty()) {
             return ResponseEntity.notFound().build();

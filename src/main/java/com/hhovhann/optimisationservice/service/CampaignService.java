@@ -6,7 +6,7 @@ import java.math.BigDecimal;
 import java.util.List;
 
 public interface CampaignService {
-    List<Campaign> getCampaignsForGroup(Long campaignGroupId);
+    List<Campaign> getCampaignsForCampaignGroup(Long campaignGroupId);
 
     int updateCampaign(Long campaignId, BigDecimal recommendedBudget);
 }
