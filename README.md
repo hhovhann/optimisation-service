@@ -259,6 +259,7 @@ Feel free if you want to use [OpenAPI Client](http://localhost:8888/swagger-ui/i
 - Batch support (need to add sequence generation for entity id's which would use batch :)
 - Cashing for all campaigns could be added
 - DBRider Integration
+- Add flow chart and erm diagram
 - Test Container integrations
 - OpenApi documentation specification improvement for all methods
 - Add more test cases to cover all business logic
