@@ -1,0 +1,6 @@
+CAMPAIGN:
+  - ID: 1
+    NAME: "Rider campaign"
+    CAMPAIGN_GROUP_ID: 1
+    BUDGET: 20
+    IMPRESSIONS: 100

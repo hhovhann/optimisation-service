@@ -6,6 +6,8 @@ import com.hhovhann.optimisationservice.model.entity.Campaign;
 import com.hhovhann.optimisationservice.repository.CampaignRepository;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
+
 @Service
 public class CampaignServiceImpl implements CampaignService {
     private final CampaignRepository campaignRepository;
