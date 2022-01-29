@@ -245,7 +245,7 @@ Response Body
 }
 ```
 
-Feel free if you want to use [OpenAPI Client](http://localhost:8888/swagger-ui/index.html#/) for testing endpoints. Information defined in section bellow
+Feel free if you want to use [OpenAPI Client](http://localhost:8888/swagger-ui/index.html#/) for testing endpoints.
 
 # How to run application and tests
 - /scripts/run.sh running the application from terminal or from IDEA and open in browser http://localhost:8888
@@ -258,7 +258,7 @@ Feel free if you want to use [OpenAPI Client](http://localhost:8888/swagger-ui/i
 # Nice To have
 - Batch support (need to add sequence generation for entity id's which would use batch :)
 - May have csv data processor (DataProcessorFactory and proper implementations for csv, xml, etc), which may take csv file and seed the database now we have that part extracted in script which using flyway
-- Cashing for all campaigns could be added
+- Cashing for all campaigns could be added for performance reason if campaing size are very big
 - DBRider Integration
 - Add flow chart and erm diagram
 - Test Container integrations
