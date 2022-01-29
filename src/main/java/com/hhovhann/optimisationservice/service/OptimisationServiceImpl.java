@@ -65,14 +65,22 @@ public class OptimisationServiceImpl implements OptimisationService {
         double impressions = campaign.stream().mapToDouble(Campaign::getImpressions).sum();
         BigDecimal budgets = campaign.stream().map(Campaign::getBudget).reduce(BigDecimal.ZERO, BigDecimal::add);
 
-        return campaign.stream().map(currentCampaign -> Recommendation.builder().campaignId(currentCampaign.getId()).optimisationId(optimisation.getId()).recommendedBudget(budgets.multiply(BigDecimal.valueOf(currentCampaign.getImpressions() / impressions))).build()).collect(Collectors.toList());
+        return campaign.stream()
+                .map(currentCampaign -> Recommendation.builder()
+                        .campaignId(currentCampaign.getId())
+                        .optimisationId(optimisation.getId())
+                        .recommendedBudget(budgets.multiply(BigDecimal.valueOf(currentCampaign.getImpressions() / impressions)))
+                        .build())
+                .collect(Collectors.toList());
     }
 
     @Override
     @Transactional
     public int applyRecommendations(List<Recommendation> recommendations, Optimisation optimisation) {
         AtomicInteger rowsUpdated = new AtomicInteger();
-        recommendations.forEach(recommendation -> rowsUpdated.set(rowsUpdated.get() + campaignService.updateCampaign(recommendation.getCampaignId(), recommendation.getRecommendedBudget())));
+        recommendations.forEach(recommendation ->
+                rowsUpdated.set(rowsUpdated.get() +
+                        campaignService.updateCampaign(recommendation.getCampaignId(), recommendation.getRecommendedBudget())));
 
         recommendationService.storeRecommendations(recommendations);
 
