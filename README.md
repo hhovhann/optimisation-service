@@ -3,10 +3,13 @@ Optimizations Service system is takes a group of campaigns, associated within a 
 
 # Tech Stack
 * Java 17
-* Spring Boot 2.6.3
-* Junit 5.8.2
-* H2 1.4.200
-* Flyway 8.4.3
+  * [source](https://www.oracle.com/java/technologies/javase/jdk17-archive-downloads.html)
+  * [documentation](https://docs.oracle.com/en/java/javase/17/)
+* [Spring Boot 2.6.3](https://spring.io/blog/2022/01/20/spring-boot-2-6-3-is-now-available)
+* [Junit 5.8.2](https://junit.org/junit5/docs/snapshot/release-notes/#release-notes-5.8.2)
+* [H2 1.4.200](http://www.h2database.com/html/quickstart.html)
+* [Flyway 8.4.3](https://flywaydb.org/documentation/learnmore/releaseNotes)
+* [DbRider 1.32.2](https://database-rider.github.io/database-rider/latest/documentation.html?theme=foundation)
 
 # Application Endpoints (Request/Response)
 To test endpoints feel free to use any of rest client tools
