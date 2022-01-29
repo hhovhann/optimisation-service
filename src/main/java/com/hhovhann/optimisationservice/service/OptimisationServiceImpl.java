@@ -10,17 +10,16 @@ import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.math.BigDecimal;
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 import static com.hhovhann.optimisationservice.model.entity.OptimisationStatus.APPLIED;
+import static java.util.Collections.emptyList;
 
 @Service
 public class OptimisationServiceImpl implements OptimisationService {
-
 
     private final OptimisationRepository optimisationRepository;
     private final CampaignRepository campaignRepository;
@@ -35,7 +34,6 @@ public class OptimisationServiceImpl implements OptimisationService {
         this.campaignService = campaignService;
     }
 
-
     @Override
     public Optional<Optimisation> getOptimisation(Long optimisationId) {
         return optimisationRepository.findById(optimisationId);
@@ -48,17 +46,18 @@ public class OptimisationServiceImpl implements OptimisationService {
     }
 
     public List<Recommendation> getLatestRecommendations(Long optimisationId) {
-        Optional<Optimisation> optimisation = this.optimisationRepository.findById(optimisationId);
-        if (optimisation.isEmpty() || optimisation.get().getStatus().equals(APPLIED)) {
-            return Collections.emptyList();
+        Optional<Optimisation> optimisationOptional = this.optimisationRepository.findById(optimisationId);
+        if (optimisationOptional.isEmpty() || optimisationOptional.get().getStatus().equals(APPLIED)) {
+            return emptyList();
         }
 
-        List<Campaign> campaigns = this.campaignRepository.findByCampaignGroupId(optimisation.get().getCampaignGroupId());
+        Optimisation optimisation = optimisationOptional.get();
+        List<Campaign> campaigns = this.campaignRepository.findByCampaignGroupId(optimisation.getCampaignGroupId());
         if (campaigns.isEmpty()) {
-            return Collections.emptyList();
+            return emptyList();
         }
 
-        return generateLatestRecommendations(campaigns, optimisation.get());
+        return generateLatestRecommendations(campaigns, optimisation);
     }
 
     public List<Recommendation> generateLatestRecommendations(List<Campaign> campaign, Optimisation optimisation) {
@@ -69,7 +68,7 @@ public class OptimisationServiceImpl implements OptimisationService {
                 .map(currentCampaign -> Recommendation.builder()
                         .campaignId(currentCampaign.getId())
                         .optimisationId(optimisation.getId())
-                        .recommendedBudget(budgets.multiply(BigDecimal.valueOf(currentCampaign.getImpressions() / impressions)))
+                        .recommendedBudget(calculateRecommendedBudget(budgets, currentCampaign.getImpressions(), impressions))
                         .build())
                 .collect(Collectors.toList());
     }
@@ -79,8 +78,7 @@ public class OptimisationServiceImpl implements OptimisationService {
     public int applyRecommendations(List<Recommendation> recommendations, Optimisation optimisation) {
         AtomicInteger rowsUpdated = new AtomicInteger();
         recommendations.forEach(recommendation ->
-                rowsUpdated.set(rowsUpdated.get() +
-                        campaignService.updateCampaign(recommendation.getCampaignId(), recommendation.getRecommendedBudget())));
+                rowsUpdated.set(rowsUpdated.get() + campaignService.updateCampaign(recommendation.getCampaignId(), recommendation.getRecommendedBudget())));
 
         recommendationService.storeRecommendations(recommendations);
 
@@ -92,5 +90,9 @@ public class OptimisationServiceImpl implements OptimisationService {
     private void storeOptimisationStatus(Optimisation optimisation) {
         optimisation.setStatus(APPLIED);
         this.optimisationRepository.save(optimisation);
+    }
+
+    private BigDecimal calculateRecommendedBudget(BigDecimal sumOfBudgets, double campaignImpressions, double sumOfImpressions) {
+        return sumOfBudgets.multiply(BigDecimal.valueOf(campaignImpressions / sumOfImpressions));
     }
 }

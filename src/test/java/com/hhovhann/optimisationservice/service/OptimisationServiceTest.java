@@ -112,15 +112,14 @@ class OptimisationServiceTest {
     void givenRecommendations_whenGetLatestRecommendations_thenReturnAllRecommendations() {
         List<Recommendation> expectedRecommendations = List.of(this.recommendation_1, this.recommendation_2);
         Mockito.when(this.campaignRepository.findByCampaignGroupId(optimisation.getCampaignGroupId())).thenReturn(List.of(this.campaign_1, this.campaign_2));
+        Mockito.when(optimisationRepository.findById(this.optimisation.getId())).thenReturn(Optional.of(this.optimisation));
 
         List<Recommendation> actualRecommendations = this.optimisationService.getLatestRecommendations(this.optimisation.getId());
 
         assertEquals(expectedRecommendations.size(), actualRecommendations.size());
-
         assertEquals(expectedRecommendations.get(0).getCampaignId(), actualRecommendations.get(0).getCampaignId());
         assertEquals(expectedRecommendations.get(0).getOptimisationId(), actualRecommendations.get(0).getOptimisationId());
         assertEquals(expectedRecommendations.get(0).getRecommendedBudget(), actualRecommendations.get(0).getRecommendedBudget());
-
         assertEquals(expectedRecommendations.get(1).getCampaignId(), actualRecommendations.get(1).getCampaignId());
         assertEquals(expectedRecommendations.get(1).getOptimisationId(), actualRecommendations.get(1).getOptimisationId());
         assertEquals(expectedRecommendations.get(1).getRecommendedBudget(), actualRecommendations.get(1).getRecommendedBudget());

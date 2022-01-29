@@ -74,7 +74,6 @@ public class CampaignGroupController {
     @PostMapping(value = "/optimisations/{optimisationId}/recommendations", produces = APPLICATION_JSON_VALUE)
     public ResponseEntity<Map<String, String>> applyLatestRecommendation(@PathVariable Long optimisationId) {
         Optional<Optimisation> optimisation = optimisationService.getOptimisation(optimisationId);
-
         if (optimisation.isEmpty()) {
             return ResponseEntity.notFound().build();
         } else if (optimisation.get().getStatus().equals(APPLIED)) {
