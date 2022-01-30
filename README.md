@@ -24,7 +24,7 @@ Request
 
 ```
 curl -X 'GET' \
-  'http://localhost:8888/api/v1/campaign/campaigngroups' \
+  'http://localhost:8888/api/v1/campaigngroups' \
   -H 'accept: application/json'
 ```
 
@@ -44,7 +44,7 @@ Response Body
 Request
 
 ```curl -X 'GET' \
-  'http://localhost:8888/api/v1/campaign/campaigngroups/1/campaigns' \
+  'http://localhost:8888/api/v1/campaigngroups/1/campaigns' \
   -H 'accept: application/json'
 ```
 
@@ -149,7 +149,7 @@ Request
 
 ```
 curl -X 'GET' \
-  'http://localhost:8888/api/v1/campaign/campaigngroups/1/optimisations' \
+  'http://localhost:8888/api/v1/campaigngroups/1/optimisations' \
   -H 'accept: application/json'
 ```
 
@@ -169,7 +169,7 @@ Request
 
 ```
 curl -X 'GET' \
-  'http://localhost:8888/api/v1/campaign/optimisations/1/recommendations' \
+  'http://localhost:8888/api/v1/optimisations/1/recommendations' \
   -H 'accept: application/json'
 ```
 
@@ -252,7 +252,7 @@ Request
 
 ```
 curl -X 'POST' \
-  'http://localhost:8888/api/v1/campaign/optimisations/1/recommendations' \
+  'http://localhost:8888/api/v1/optimisations/1/recommendations' \
   -H 'accept: application/json' \
   -d ''
 ```

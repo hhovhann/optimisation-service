@@ -22,13 +22,11 @@ import java.math.BigDecimal;
 import java.util.Collections;
 
 import static java.util.Optional.empty;
-import static java.util.Optional.of;
 import static org.hamcrest.Matchers.is;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -43,9 +41,6 @@ class CampaignGroupControllerTest {
 
     @MockBean
     private CampaignRepository campaignRepository;
-
-    @MockBean
-    private OptimisationRepository optimisationRepository;
 
     @MockBean
     private OptimisationService optimisationService;
@@ -76,7 +71,7 @@ class CampaignGroupControllerTest {
     void givenNoCampaignGroups_WhenGetRequest_thenReturnNotFound() throws Exception {
         given(campaignGroupRepository.findAll()).willReturn(Collections.emptyList());
 
-        mockMvc.perform(get("/api/v1/campaign/campaigngroups"))
+        mockMvc.perform(get("/api/v1/campaigngroups"))
                 .andExpect(status().isNotFound());
     }
 
@@ -85,7 +80,7 @@ class CampaignGroupControllerTest {
     void givenCampaignGroups_whenGetCampaignGroups_thenReturnJsonArray() throws Exception {
         given(this.campaignGroupRepository.findAllCampaignGroupDto_Named()).willReturn(Collections.singletonList(this.campaignGroupDto));
 
-        mockMvc.perform(get("/api/v1/campaign/campaigngroups"))
+        mockMvc.perform(get("/api/v1/campaigngroups"))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(APPLICATION_JSON))
@@ -97,7 +92,7 @@ class CampaignGroupControllerTest {
     void givenCampaignGroupId_whenCampaignsForGroup_thenReturnJsonArray() throws Exception {
         given(this.campaignRepository.findByCampaignGroupId(any())).willReturn(Collections.singletonList(this.campaignDto));
 
-        mockMvc.perform(get("/api/v1/campaign/campaigngroups/{campaignGroupId}/campaigns", 1))
+        mockMvc.perform(get("/api/v1/campaigngroups/{campaignGroupId}/campaigns", 1))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(APPLICATION_JSON))
@@ -113,7 +108,7 @@ class CampaignGroupControllerTest {
     void givenCampaignGroupId_whenZeroCampaignsForGroup_thenReturnNotFound() throws Exception {
         given(this.campaignRepository.findByCampaignGroupId(any())).willReturn(Collections.emptyList());
 
-        mockMvc.perform(get("/api/v1/campaign/campaigngroups/1/campaigns"))
+        mockMvc.perform(get("/api/v1/campaigngroups/1/campaigns"))
                 .andExpect(status().isNotFound());
     }
 
@@ -122,7 +117,7 @@ class CampaignGroupControllerTest {
         given(this.optimisationService.getLatestOptimisationForCampaignGroup(any()))
                 .willReturn(java.util.Optional.ofNullable(this.optimisationDto));
 
-        mockMvc.perform(get("/api/v1/campaign/campaigngroups/{campaignGroupId}/optimisations", 1))
+        mockMvc.perform(get("/api/v1/campaigngroups/{campaignGroupId}/optimisations", 1))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(APPLICATION_JSON))
@@ -135,45 +130,7 @@ class CampaignGroupControllerTest {
     void givenCampaignGroupId_whenZeroOptimisationsForGroup_thenReturnNotFound() throws Exception {
         given(this.optimisationService.getLatestOptimisationForCampaignGroup(any())).willReturn(empty());
 
-        mockMvc.perform(get("/api/v1/campaign/campaigngroups/{campaignGroupId}/optimisations", 1))
+        mockMvc.perform(get("/api/v1/campaigngroups/{campaignGroupId}/optimisations", 1))
                 .andExpect(status().isNotFound());
-    }
-
-    @Test
-    void givenOptimisationId_whenRecommendationsForOptimisation_thenReturnJsonArray() throws Exception {
-        given(this.optimisationService.getLatestRecommendations(any())).willReturn(Collections.singletonList(this.recommendation));
-
-        mockMvc.perform(get("/api/v1/campaign/optimisations/{optimisationId}/recommendations", 1))
-                .andDo(print())
-                .andExpect(status().isOk())
-                .andExpect(content().contentTypeCompatibleWith(APPLICATION_JSON))
-                .andExpect(jsonPath("$.[0].id", is(this.recommendation.getId()), Long.class))
-                .andExpect(jsonPath("$.[0].campaignId", is(this.recommendation.getCampaignId()), Long.class))
-                .andExpect(jsonPath("$.[0].optimisationId", is(this.recommendation.getOptimisationId()), Long.class))
-                .andExpect(jsonPath("$.[0].recommendedBudget", is(this.recommendation.getRecommendedBudget()), BigDecimal.class));
-
-    }
-
-    @Test
-    void givenOptimisationId_whenZeroRecommendationsForOptimisation_thenReturnNotFound() throws Exception {
-        given(this.optimisationService.getLatestRecommendations(any())).willReturn(Collections.emptyList());
-
-        mockMvc.perform(get("/api/v1/campaign/optimisations/{optimisationId}/recommendations", 1))
-                .andExpect(status().isNotFound());
-    }
-
-
-    @Test
-    void givenOptimisationId_whenApplyRecommendation_thenCampaignBudgetUpdated() throws Exception {
-        given(this.optimisationRepository.findOptimisationDtoById_Named(any())).willReturn(of(this.optimisationDto));
-        given(this.optimisationService.getOptimisation(any())).willReturn(of(this.optimisationDto));
-        given(this.optimisationService.getLatestRecommendations(any())).willReturn(Collections.singletonList(this.recommendation));
-        given(this.optimisationService.applyRecommendations(any(), any())).willReturn(1);
-
-        mockMvc.perform(post("/api/v1/campaign/optimisations/{optimisationId}/recommendations", this.optimisationDto.id()))
-                .andDo(print())
-                .andExpect(status().isOk())
-                .andExpect(content().contentTypeCompatibleWith(APPLICATION_JSON))
-                .andExpect(jsonPath("$.message", is("Updated Campaigns 1")));
     }
 }
