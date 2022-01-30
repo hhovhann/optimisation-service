@@ -1,5 +1,6 @@
 package com.hhovhann.optimisationservice.service;
 
+import com.hhovhann.optimisationservice.model.dto.CampaignDto;
 import com.hhovhann.optimisationservice.model.entity.Campaign;
 import com.hhovhann.optimisationservice.model.entity.CampaignGroup;
 import com.hhovhann.optimisationservice.model.entity.Optimisation;
@@ -13,13 +14,14 @@ import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+
 import java.math.BigDecimal;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
-import static com.hhovhann.optimisationservice.model.entity.OptimisationStatus.APPLIED;
-import static com.hhovhann.optimisationservice.model.entity.OptimisationStatus.NOT_APPLIED;
+import static com.hhovhann.optimisationservice.model.OptimisationStatus.APPLIED;
+import static com.hhovhann.optimisationservice.model.OptimisationStatus.NOT_APPLIED;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
 
@@ -42,7 +44,7 @@ class OptimisationServiceTest {
 
     private Optimisation optimisation;
     private Recommendation recommendation_1, recommendation_2;
-    private Campaign campaign_1, campaign_2;
+    private CampaignDto campaign_1, campaign_2;
     private CampaignGroup campaignGroup;
 
     @BeforeEach
@@ -51,33 +53,19 @@ class OptimisationServiceTest {
                 .id(1L)
                 .name("Campaign Group One").build();
 
-        this.campaign_1 = Campaign.builder()
-                .id(1L)
-                .campaignGroupId(this.campaignGroup.getId())
-                .budget(BigDecimal.TEN)
-                .impressions(10D)
-                .name("Fist Campaign")
-                .revenue(BigDecimal.TEN).build();
-
-
-        this.campaign_2 = Campaign.builder()
-                .id(2L)
-                .campaignGroupId(this.campaignGroup.getId())
-                .budget(BigDecimal.TEN)
-                .impressions(40D)
-                .name("Second Campaign")
-                .revenue(BigDecimal.TEN).build();
-
+        // Long id, String name, Long campaignGroupId, BigDecimal budget, Double impressions, BigDecimal revenue)
+        this.campaign_1 = new CampaignDto(1L, "Fist Campaign", this.campaignGroup.getId(), BigDecimal.TEN, 10D, BigDecimal.TEN);
+        this.campaign_2 = new CampaignDto(2L, "Second Campaign", this.campaignGroup.getId(), BigDecimal.TEN, 40D, BigDecimal.TEN);
 
         this.optimisation = Optimisation.builder().id(1L).campaignGroupId(this.campaignGroup.getId()).status(NOT_APPLIED).build();
 
         this.recommendation_1 = Recommendation.builder()
-                .campaignId(this.campaign_1.getId())
+                .campaignId(this.campaign_1.id())
                 .optimisationId(this.optimisation.getId())
                 .recommendedBudget(BigDecimal.valueOf(4D)).build();
 
         this.recommendation_2 = Recommendation.builder()
-                .campaignId(this.campaign_2.getId())
+                .campaignId(this.campaign_2.id())
                 .optimisationId(this.optimisation.getId())
                 .recommendedBudget(BigDecimal.valueOf(16D)).build();
     }

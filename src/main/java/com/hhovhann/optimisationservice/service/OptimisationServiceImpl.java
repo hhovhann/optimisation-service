@@ -1,6 +1,6 @@
 package com.hhovhann.optimisationservice.service;
 
-import com.hhovhann.optimisationservice.model.entity.Campaign;
+import com.hhovhann.optimisationservice.model.dto.CampaignDto;
 import com.hhovhann.optimisationservice.model.entity.Optimisation;
 import com.hhovhann.optimisationservice.model.entity.Recommendation;
 import com.hhovhann.optimisationservice.repository.CampaignRepository;
@@ -15,7 +15,7 @@ import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
-import static com.hhovhann.optimisationservice.model.entity.OptimisationStatus.APPLIED;
+import static com.hhovhann.optimisationservice.model.OptimisationStatus.APPLIED;
 import static java.util.Collections.emptyList;
 
 @Service
@@ -52,7 +52,7 @@ public class OptimisationServiceImpl implements OptimisationService {
         }
 
         Optimisation optimisation = optimisationOptional.get();
-        List<Campaign> campaigns = this.campaignRepository.findByCampaignGroupId(optimisation.getCampaignGroupId());
+        List<CampaignDto> campaigns = this.campaignRepository.findByCampaignGroupId(optimisation.getCampaignGroupId());
         if (campaigns.isEmpty()) {
             return emptyList();
         }
@@ -60,15 +60,15 @@ public class OptimisationServiceImpl implements OptimisationService {
         return generateLatestRecommendations(campaigns, optimisation);
     }
 
-    public List<Recommendation> generateLatestRecommendations(List<Campaign> campaign, Optimisation optimisation) {
-        double impressions = campaign.stream().mapToDouble(Campaign::getImpressions).sum();
-        BigDecimal budgets = campaign.stream().map(Campaign::getBudget).reduce(BigDecimal.ZERO, BigDecimal::add);
+    public List<Recommendation> generateLatestRecommendations(List<CampaignDto> campaign, Optimisation optimisation) {
+        double impressions = campaign.stream().mapToDouble(CampaignDto::impressions).sum();
+        BigDecimal budgets = campaign.stream().map(CampaignDto::budget).reduce(BigDecimal.ZERO, BigDecimal::add);
 
         return campaign.stream()
                 .map(currentCampaign -> Recommendation.builder()
-                        .campaignId(currentCampaign.getId())
+                        .campaignId(currentCampaign.id())
                         .optimisationId(optimisation.getId())
-                        .recommendedBudget(calculateRecommendedBudget(budgets, currentCampaign.getImpressions(), impressions))
+                        .recommendedBudget(calculateRecommendedBudget(budgets, currentCampaign.impressions(), impressions))
                         .build())
                 .collect(Collectors.toList());
     }

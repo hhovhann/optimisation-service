@@ -259,8 +259,8 @@ Feel free if you want to use [OpenAPI Client](http://localhost:8888/swagger-ui/i
 - [How do I apply recommendations?](https://help.optily.app/en/articles/4550288-how-do-i-apply-recommendations)
 
 # Nice To have
-- Avoid using Lombok in entity. [Recomendations](https://thorben-janssen.com/lombok-hibernate-how-to-avoid-common-pitfalls/)
-- Using DTO for response(could be good place for Java records). [Recomendations](https://thorben-janssen.com/java-records-hibernate-jpa/)
+- Avoid using Lombok in entity. [Recommendations](https://thorben-janssen.com/lombok-hibernate-how-to-avoid-common-pitfalls/)
+- Using DTO for response, now only support with CampaignDto (Good place for Java records). [Recommendations](https://thorben-janssen.com/java-records-hibernate-jpa/)
 - Batch support (need to add sequence generators for id when will have support for batch add/remove)
 - May have csv data processor (DataProcessorFactory and proper implementations for csv, xml, etc), which may take csv file and seed the database now we have that part extracted in script which using flyway
 - Cashing for all campaigns could be added for performance reason if campaing size are very big

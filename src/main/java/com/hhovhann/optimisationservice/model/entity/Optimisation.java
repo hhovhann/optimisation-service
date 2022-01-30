@@ -1,5 +1,6 @@
 package com.hhovhann.optimisationservice.model.entity;
 
+import com.hhovhann.optimisationservice.model.OptimisationStatus;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;

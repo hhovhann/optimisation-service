@@ -10,7 +10,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 import java.util.List;
 
-import static com.hhovhann.optimisationservice.model.entity.OptimisationStatus.NOT_APPLIED;
+import static com.hhovhann.optimisationservice.model.OptimisationStatus.NOT_APPLIED;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @DBRider

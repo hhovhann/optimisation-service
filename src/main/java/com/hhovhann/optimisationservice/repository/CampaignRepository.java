@@ -1,5 +1,6 @@
 package com.hhovhann.optimisationservice.repository;
 
+import com.hhovhann.optimisationservice.model.dto.CampaignDto;
 import com.hhovhann.optimisationservice.model.entity.Campaign;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
@@ -14,7 +15,7 @@ import java.util.List;
 @Repository
 public interface CampaignRepository extends JpaRepository<Campaign, Long> {
 
-    List<Campaign> findByCampaignGroupId(Long campaignGroupId);
+    List<CampaignDto> findByCampaignGroupId(Long campaignGroupId);
 
     @Modifying
     @Transactional

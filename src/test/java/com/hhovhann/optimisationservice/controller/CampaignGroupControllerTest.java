@@ -1,6 +1,10 @@
 package com.hhovhann.optimisationservice.controller;
 
-import com.hhovhann.optimisationservice.model.entity.*;
+import com.hhovhann.optimisationservice.model.OptimisationStatus;
+import com.hhovhann.optimisationservice.model.dto.CampaignDto;
+import com.hhovhann.optimisationservice.model.entity.CampaignGroup;
+import com.hhovhann.optimisationservice.model.entity.Optimisation;
+import com.hhovhann.optimisationservice.model.entity.Recommendation;
 import com.hhovhann.optimisationservice.repository.CampaignGroupRepository;
 import com.hhovhann.optimisationservice.repository.CampaignRepository;
 import com.hhovhann.optimisationservice.repository.OptimisationRepository;
@@ -13,8 +17,10 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.web.servlet.MockMvc;
+
 import java.math.BigDecimal;
 import java.util.Collections;
+
 import static java.util.Optional.empty;
 import static java.util.Optional.of;
 import static org.hamcrest.Matchers.is;
@@ -46,7 +52,7 @@ class CampaignGroupControllerTest {
 
     private CampaignGroup campaignGroup;
 
-    private Campaign campaign;
+    private CampaignDto campaignDto;
 
     private Optimisation optimisation;
 
@@ -59,14 +65,8 @@ class CampaignGroupControllerTest {
                 .id(1L)
                 .name("Campaign Group One").build();
 
-        this.campaign = Campaign.builder()
-                .id(1L)
-                .campaignGroupId(this.campaignGroup.getId())
-                .budget(BigDecimal.ONE)
-                .impressions(123D)
-                .name("Fist Campaign")
-                .revenue(BigDecimal.TEN)
-                .build();
+        this.campaignDto = new CampaignDto(1L, "Fist Campaign", this.campaignGroup.getId(), BigDecimal.ONE, 123D, BigDecimal.TEN);
+
 
         this.optimisation = Optimisation.builder()
                 .id(1L)
@@ -76,7 +76,7 @@ class CampaignGroupControllerTest {
 
         this.recommendation = Recommendation.builder()
                 .id(1L)
-                .campaignId(this.campaign.getId())
+                .campaignId(this.campaignDto.id())
                 .optimisationId(this.optimisation.getId())
                 .recommendedBudget(BigDecimal.TEN).build();
     }
@@ -105,18 +105,18 @@ class CampaignGroupControllerTest {
 
     @Test
     void givenCampaignGroupId_whenCampaignsForGroup_thenReturnJsonArray() throws Exception {
-        given(this.campaignRepository.findByCampaignGroupId(any())).willReturn(Collections.singletonList(this.campaign));
+        given(this.campaignRepository.findByCampaignGroupId(any())).willReturn(Collections.singletonList(this.campaignDto));
 
         mockMvc.perform(get("/api/v1/campaign/campaigngroups/{campaignGroupId}/campaigns", 1))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(APPLICATION_JSON))
-                .andExpect(jsonPath("$.[0].name", is(this.campaign.getName())))
-                .andExpect(jsonPath("$.[0].id", is(this.campaign.getId()), Long.class))
-                .andExpect(jsonPath("$.[0].campaignGroupId", is(this.campaign.getCampaignGroupId()), Long.class))
-                .andExpect(jsonPath("$.[0].budget", is(this.campaign.getBudget()), BigDecimal.class))
-                .andExpect(jsonPath("$.[0].impressions", is(this.campaign.getImpressions())))
-                .andExpect(jsonPath("$.[0].revenue", is(this.campaign.getRevenue()), BigDecimal.class));
+                .andExpect(jsonPath("$.[0].name", is(this.campaignDto.name())))
+                .andExpect(jsonPath("$.[0].id", is(this.campaignDto.id()), Long.class))
+                .andExpect(jsonPath("$.[0].campaignGroupId", is(this.campaignDto.campaignGroupId()), Long.class))
+                .andExpect(jsonPath("$.[0].budget", is(this.campaignDto.budget()), BigDecimal.class))
+                .andExpect(jsonPath("$.[0].impressions", is(this.campaignDto.impressions())))
+                .andExpect(jsonPath("$.[0].revenue", is(this.campaignDto.revenue()), BigDecimal.class));
     }
 
     @Test
@@ -165,7 +165,7 @@ class CampaignGroupControllerTest {
     }
 
     @Test
-    void givenOptimisationId_whenZeroRecommendationsForOptimisation_thenReturnNotFound() throws Exception{
+    void givenOptimisationId_whenZeroRecommendationsForOptimisation_thenReturnNotFound() throws Exception {
         given(this.optimisationService.getLatestRecommendations(any())).willReturn(Collections.emptyList());
 
         mockMvc.perform(get("/api/v1/campaign/optimisations/{optimisationId}/recommendations", 1))
@@ -174,12 +174,11 @@ class CampaignGroupControllerTest {
 
 
     @Test
-    void givenOptimisationId_whenApplyRecommendation_thenCampaignBudgetUpdated() throws Exception{
+    void givenOptimisationId_whenApplyRecommendation_thenCampaignBudgetUpdated() throws Exception {
         given(this.optimisationRepository.findById(any())).willReturn(of(this.optimisation));
         given(this.optimisationService.getOptimisation(any())).willReturn(of(this.optimisation));
         given(this.optimisationService.getLatestRecommendations(any())).willReturn(Collections.singletonList(this.recommendation));
         given(this.optimisationService.applyRecommendations(any(), any())).willReturn(1);
-        this.campaign.setBudget(this.recommendation.getRecommendedBudget());
 
         mockMvc.perform(post("/api/v1/campaign/optimisations/{optimisationId}/recommendations", this.optimisation.getId()))
                 .andDo(print())

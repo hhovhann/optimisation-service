@@ -1,6 +1,6 @@
 package com.hhovhann.optimisationservice.controller;
 
-import com.hhovhann.optimisationservice.model.entity.Campaign;
+import com.hhovhann.optimisationservice.model.dto.CampaignDto;
 import com.hhovhann.optimisationservice.model.entity.CampaignGroup;
 import com.hhovhann.optimisationservice.model.entity.Optimisation;
 import com.hhovhann.optimisationservice.model.entity.Recommendation;
@@ -16,7 +16,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-import static com.hhovhann.optimisationservice.model.entity.OptimisationStatus.APPLIED;
+import static com.hhovhann.optimisationservice.model.OptimisationStatus.APPLIED;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 @RestController
@@ -48,8 +48,8 @@ public class CampaignGroupController {
 
     @ResponseBody
     @GetMapping(value = "/campaigngroups/{campaignGroupId}/campaigns", produces = APPLICATION_JSON_VALUE)
-    public ResponseEntity<List<Campaign>> retrieveAllCampaignsForCampaignGroup(@PathVariable Long campaignGroupId) {
-        List<Campaign> campaigns = campaignService.getCampaignsForCampaignGroup(campaignGroupId);
+    public ResponseEntity<List<CampaignDto>> retrieveAllCampaignsForCampaignGroup(@PathVariable Long campaignGroupId) {
+        List<CampaignDto> campaigns = campaignService.getCampaignsForCampaignGroup(campaignGroupId);
 
         return campaigns.isEmpty() ? ResponseEntity.notFound().build() : ResponseEntity.ok().body(campaigns);
     }
