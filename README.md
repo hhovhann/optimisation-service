@@ -284,11 +284,9 @@ Feel free if you want to use [OpenAPI Client](http://localhost:8888/swagger-ui/i
 # Nice To have
 
 - Batch support (need to add sequence generators for id when will have support for batch add/remove)
+- Cashing for all campaigns could be added for performance reason if campaing size are very big
 - May have csv data processor (DataProcessorFactory and proper implementations for csv, xml, etc), which may take csv
   file and seed the database now we have that part extracted in script which using flyway
-- Cashing for all campaigns could be added for performance reason if campaing size are very big
-- DBRider Integration - Added some repository tests with DbRider help :)
-- Add flow chart and erm diagram
 - Test Container integrations
 - OpenApi documentation specification improvement for all methods
 - Add more test cases to cover all business logic
