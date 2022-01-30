@@ -16,6 +16,6 @@ public class CampaignGroupServiceImpl implements CampaignGroupService {
 
     @Override
     public List<CampaignGroupDto> findAllCampaignGroups() {
-        return this.campaignGroupRepository.findAllCampaignGroupDto_Named();
+        return campaignGroupRepository.findAllCampaignGroupDto_Named();
     }
 }

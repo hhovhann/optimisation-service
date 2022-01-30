@@ -2,8 +2,8 @@ package com.hhovhann.optimisationservice.controller;
 
 import com.hhovhann.optimisationservice.model.OptimisationStatus;
 import com.hhovhann.optimisationservice.model.dto.CampaignDto;
+import com.hhovhann.optimisationservice.model.dto.CampaignGroupDto;
 import com.hhovhann.optimisationservice.model.dto.OptimisationDto;
-import com.hhovhann.optimisationservice.model.entity.CampaignGroup;
 import com.hhovhann.optimisationservice.model.entity.Recommendation;
 import com.hhovhann.optimisationservice.repository.CampaignGroupRepository;
 import com.hhovhann.optimisationservice.repository.CampaignRepository;
@@ -50,7 +50,7 @@ class CampaignGroupControllerTest {
     @MockBean
     private OptimisationService optimisationService;
 
-    private CampaignGroup campaignGroup;
+    private CampaignGroupDto campaignGroupDto;
 
     private CampaignDto campaignDto;
 
@@ -60,15 +60,9 @@ class CampaignGroupControllerTest {
 
     @BeforeEach
     public void setup() {
-
-        this.campaignGroup = CampaignGroup.builder()
-                .id(1L)
-                .name("Campaign Group One").build();
-
-        this.campaignDto = new CampaignDto(1L, "Fist Campaign", this.campaignGroup.getId(), BigDecimal.ONE, 123D, BigDecimal.TEN);
-
-
-        this.optimisationDto = new OptimisationDto(1L, this.campaignGroup.getId(),OptimisationStatus.NOT_APPLIED.name());
+        this.campaignGroupDto = new CampaignGroupDto(1L, "Campaign Group One");
+        this.campaignDto = new CampaignDto(1L, "Fist Campaign", this.campaignGroupDto.id(), BigDecimal.ONE, 123D, BigDecimal.TEN);
+        this.optimisationDto = new OptimisationDto(1L, this.campaignGroupDto.id(),OptimisationStatus.NOT_APPLIED.name());
 
         this.recommendation = Recommendation.builder()
                 .id(1L)
@@ -89,14 +83,14 @@ class CampaignGroupControllerTest {
     @Test
     @DisplayName("Return campaign group when campaign group are provided")
     void givenCampaignGroups_whenGetCampaignGroups_thenReturnJsonArray() throws Exception {
-        given(this.campaignGroupRepository.findAll()).willReturn(Collections.singletonList(this.campaignGroup));
+        given(this.campaignGroupRepository.findAllCampaignGroupDto_Named()).willReturn(Collections.singletonList(this.campaignGroupDto));
 
         mockMvc.perform(get("/api/v1/campaign/campaigngroups"))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(APPLICATION_JSON))
-                .andExpect(jsonPath("$.[0].name", is(this.campaignGroup.getName())))
-                .andExpect(jsonPath("$.[0].id", is(this.campaignGroup.getId()), Long.class));
+                .andExpect(jsonPath("$.[0].name", is(this.campaignGroupDto.name())))
+                .andExpect(jsonPath("$.[0].id", is(this.campaignGroupDto.id()), Long.class));
     }
 
     @Test
