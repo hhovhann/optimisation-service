@@ -15,5 +15,6 @@ public interface OptimisationRepository extends JpaRepository<Optimisation, Long
     @Query(nativeQuery = true)
     Optional<OptimisationDto> findOptimisationDtoById_Named(Long id);
 
-    List<Optimisation> findByCampaignGroupIdOrderByIdDesc(Long campaignGroupId);
+    @Query(nativeQuery = true)
+    List<OptimisationDto> findOptimisationDtoByCampaignGroupIdOrderByIdDesc_Named(Long campaignGroupId);
 }

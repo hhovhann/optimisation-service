@@ -1,17 +1,18 @@
 package com.hhovhann.optimisationservice.service;
 
+import com.hhovhann.optimisationservice.model.dto.OptimisationDto;
+import com.hhovhann.optimisationservice.model.entity.Recommendation;
+
 import java.util.List;
 import java.util.Optional;
-import com.hhovhann.optimisationservice.model.entity.Optimisation;
-import com.hhovhann.optimisationservice.model.entity.Recommendation;
 
 public interface OptimisationService {
 
-    Optional<Optimisation> getOptimisation(Long optimisationId);
+    Optional<OptimisationDto> getOptimisation(Long optimisationId);
 
-    Optional<Optimisation> getLatestOptimisationForCampaignGroup(Long campaignGroupId);
+    Optional<OptimisationDto> getLatestOptimisationForCampaignGroup(Long campaignGroupId);
 
     List<Recommendation> getLatestRecommendations(Long optimisationId);
 
-    int applyRecommendations(List<Recommendation> recommendations, Optimisation optimisation);
+    int applyRecommendations(List<Recommendation> recommendations, OptimisationDto optimisation);
 }

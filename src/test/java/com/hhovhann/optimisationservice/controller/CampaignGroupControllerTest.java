@@ -2,8 +2,8 @@ package com.hhovhann.optimisationservice.controller;
 
 import com.hhovhann.optimisationservice.model.OptimisationStatus;
 import com.hhovhann.optimisationservice.model.dto.CampaignDto;
+import com.hhovhann.optimisationservice.model.dto.OptimisationDto;
 import com.hhovhann.optimisationservice.model.entity.CampaignGroup;
-import com.hhovhann.optimisationservice.model.entity.Optimisation;
 import com.hhovhann.optimisationservice.model.entity.Recommendation;
 import com.hhovhann.optimisationservice.repository.CampaignGroupRepository;
 import com.hhovhann.optimisationservice.repository.CampaignRepository;
@@ -54,7 +54,7 @@ class CampaignGroupControllerTest {
 
     private CampaignDto campaignDto;
 
-    private Optimisation optimisation;
+    private OptimisationDto optimisationDto;
 
     private Recommendation recommendation;
 
@@ -68,16 +68,12 @@ class CampaignGroupControllerTest {
         this.campaignDto = new CampaignDto(1L, "Fist Campaign", this.campaignGroup.getId(), BigDecimal.ONE, 123D, BigDecimal.TEN);
 
 
-        this.optimisation = Optimisation.builder()
-                .id(1L)
-                .campaignGroupId(this.campaignGroup.getId())
-                .status(OptimisationStatus.NOT_APPLIED)
-                .build();
+        this.optimisationDto = new OptimisationDto(1L, this.campaignGroup.getId(),OptimisationStatus.NOT_APPLIED.name());
 
         this.recommendation = Recommendation.builder()
                 .id(1L)
                 .campaignId(this.campaignDto.id())
-                .optimisationId(this.optimisation.getId())
+                .optimisationId(this.optimisationDto.id())
                 .recommendedBudget(BigDecimal.TEN).build();
     }
 
@@ -130,15 +126,15 @@ class CampaignGroupControllerTest {
     @Test
     void givenCampaignGroupId_whenOptimisationsForGroup_thenReturnJsonArray() throws Exception {
         given(this.optimisationService.getLatestOptimisationForCampaignGroup(any()))
-                .willReturn(java.util.Optional.ofNullable(this.optimisation));
+                .willReturn(java.util.Optional.ofNullable(this.optimisationDto));
 
         mockMvc.perform(get("/api/v1/campaign/campaigngroups/{campaignGroupId}/optimisations", 1))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(APPLICATION_JSON))
-                .andExpect(jsonPath("$.id", is(this.optimisation.getId()), Long.class))
-                .andExpect(jsonPath("$.campaignGroupId", is(this.optimisation.getCampaignGroupId()), Long.class))
-                .andExpect(jsonPath("$.status", is(this.optimisation.getStatus().name())));
+                .andExpect(jsonPath("$.id", is(this.optimisationDto.id()), Long.class))
+                .andExpect(jsonPath("$.campaignGroupId", is(this.optimisationDto.id()), Long.class))
+                .andExpect(jsonPath("$.status", is(this.optimisationDto.status())));
     }
 
     @Test
@@ -175,12 +171,12 @@ class CampaignGroupControllerTest {
 
     @Test
     void givenOptimisationId_whenApplyRecommendation_thenCampaignBudgetUpdated() throws Exception {
-        given(this.optimisationRepository.findById(any())).willReturn(of(this.optimisation));
-        given(this.optimisationService.getOptimisation(any())).willReturn(of(this.optimisation));
+        given(this.optimisationRepository.findOptimisationDtoById_Named(any())).willReturn(of(this.optimisationDto));
+        given(this.optimisationService.getOptimisation(any())).willReturn(of(this.optimisationDto));
         given(this.optimisationService.getLatestRecommendations(any())).willReturn(Collections.singletonList(this.recommendation));
         given(this.optimisationService.applyRecommendations(any(), any())).willReturn(1);
 
-        mockMvc.perform(post("/api/v1/campaign/optimisations/{optimisationId}/recommendations", this.optimisation.getId()))
+        mockMvc.perform(post("/api/v1/campaign/optimisations/{optimisationId}/recommendations", this.optimisationDto.id()))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(APPLICATION_JSON))

@@ -24,13 +24,17 @@ class OptimisationRepositoryTest {
     private OptimisationRepository optimisationRepository;
 
     @Test
-    @DataSet("optimisation/optimisation.yml")
-    void shouldReturnListOfOptimisations_whenCampaignGroupIdProvided() {
-        List<Optimisation> optimisations = optimisationRepository.findByCampaignGroupIdOrderByIdDesc(1L);
+    @DataSet("optimisation/optimisations.yml")
+    void shouldReturnListOfOptimisationDto_WhenOptimisationIdProvided() {
+        List<OptimisationDto>optimisationDtos = optimisationRepository.findOptimisationDtoByCampaignGroupIdOrderByIdDesc_Named(1L);
 
-        assertEquals(optimisations.size(), 1);
-        assertEquals(optimisations.get(0).getCampaignGroupId(), 1);
-        assertEquals(optimisations.get(0).getStatus(), NOT_APPLIED);
+        assertEquals(optimisationDtos.get(0).id(), 1);
+        assertEquals(optimisationDtos.get(0).campaignGroupId(), 1);
+        assertEquals(optimisationDtos.get(0).status(), "NOT_APPLIED");
+
+        assertEquals(optimisationDtos.get(1).id(), 2);
+        assertEquals(optimisationDtos.get(1).campaignGroupId(), 1);
+        assertEquals(optimisationDtos.get(1).status(), "APPLIED");
     }
 
     @Test

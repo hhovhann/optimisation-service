@@ -1,6 +1,7 @@
 package com.hhovhann.optimisationservice.service;
 
 import com.hhovhann.optimisationservice.model.dto.CampaignDto;
+import com.hhovhann.optimisationservice.model.dto.OptimisationDto;
 import com.hhovhann.optimisationservice.model.entity.Optimisation;
 import com.hhovhann.optimisationservice.model.entity.Recommendation;
 import com.hhovhann.optimisationservice.repository.CampaignRepository;
@@ -35,24 +36,24 @@ public class OptimisationServiceImpl implements OptimisationService {
     }
 
     @Override
-    public Optional<Optimisation> getOptimisation(Long optimisationId) {
-        return optimisationRepository.findById(optimisationId);
+    public Optional<OptimisationDto> getOptimisation(Long optimisationId) {
+        return optimisationRepository.findOptimisationDtoById_Named(optimisationId);
     }
 
     @Override
-    public Optional<Optimisation> getLatestOptimisationForCampaignGroup(Long campaignGroupId) {
-        List<Optimisation> optimisations = optimisationRepository.findByCampaignGroupIdOrderByIdDesc(campaignGroupId);
+    public Optional<OptimisationDto> getLatestOptimisationForCampaignGroup(Long campaignGroupId) {
+        List<OptimisationDto> optimisations = optimisationRepository.findOptimisationDtoByCampaignGroupIdOrderByIdDesc_Named(campaignGroupId);
         return Optional.of(optimisations.get(0));
     }
 
     public List<Recommendation> getLatestRecommendations(Long optimisationId) {
-        Optional<Optimisation> optimisationOptional = this.optimisationRepository.findById(optimisationId);
-        if (optimisationOptional.isEmpty() || optimisationOptional.get().getStatus().equals(APPLIED)) {
+        Optional<OptimisationDto> optimisationOptional = this.optimisationRepository.findOptimisationDtoById_Named(optimisationId);
+        if (optimisationOptional.isEmpty() || optimisationOptional.get().status().equals(APPLIED)) {
             return emptyList();
         }
 
-        Optimisation optimisation = optimisationOptional.get();
-        List<CampaignDto> campaigns = this.campaignRepository.findByCampaignGroupId(optimisation.getCampaignGroupId());
+        OptimisationDto optimisation = optimisationOptional.get();
+        List<CampaignDto> campaigns = this.campaignRepository.findByCampaignGroupId(optimisation.campaignGroupId());
         if (campaigns.isEmpty()) {
             return emptyList();
         }
@@ -60,14 +61,14 @@ public class OptimisationServiceImpl implements OptimisationService {
         return generateLatestRecommendations(campaigns, optimisation);
     }
 
-    public List<Recommendation> generateLatestRecommendations(List<CampaignDto> campaign, Optimisation optimisation) {
+    public List<Recommendation> generateLatestRecommendations(List<CampaignDto> campaign, OptimisationDto optimisation) {
         double impressions = campaign.stream().mapToDouble(CampaignDto::impressions).sum();
         BigDecimal budgets = campaign.stream().map(CampaignDto::budget).reduce(BigDecimal.ZERO, BigDecimal::add);
 
         return campaign.stream()
                 .map(currentCampaign -> Recommendation.builder()
                         .campaignId(currentCampaign.id())
-                        .optimisationId(optimisation.getId())
+                        .optimisationId(optimisation.id())
                         .recommendedBudget(calculateRecommendedBudget(budgets, currentCampaign.impressions(), impressions))
                         .build())
                 .collect(Collectors.toList());
@@ -75,21 +76,16 @@ public class OptimisationServiceImpl implements OptimisationService {
 
     @Override
     @Transactional
-    public int applyRecommendations(List<Recommendation> recommendations, Optimisation optimisation) {
+    public int applyRecommendations(List<Recommendation> recommendations, OptimisationDto optimisationDto) {
         AtomicInteger rowsUpdated = new AtomicInteger();
         recommendations.forEach(recommendation ->
                 rowsUpdated.set(rowsUpdated.get() + campaignService.updateCampaign(recommendation.getCampaignId(), recommendation.getRecommendedBudget())));
 
         recommendationService.storeRecommendations(recommendations);
 
-        storeOptimisationStatus(optimisation);
+        optimisationRepository.save(new Optimisation(optimisationDto.id(), optimisationDto.campaignGroupId(), APPLIED));
 
         return rowsUpdated.get();
-    }
-
-    private void storeOptimisationStatus(Optimisation optimisation) {
-        optimisation.setStatus(APPLIED);
-        this.optimisationRepository.save(optimisation);
     }
 
     private BigDecimal calculateRecommendedBudget(BigDecimal sumOfBudgets, double campaignImpressions, double sumOfImpressions) {

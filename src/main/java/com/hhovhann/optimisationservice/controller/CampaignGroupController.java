@@ -1,8 +1,8 @@
 package com.hhovhann.optimisationservice.controller;
 
 import com.hhovhann.optimisationservice.model.dto.CampaignDto;
+import com.hhovhann.optimisationservice.model.dto.OptimisationDto;
 import com.hhovhann.optimisationservice.model.entity.CampaignGroup;
-import com.hhovhann.optimisationservice.model.entity.Optimisation;
 import com.hhovhann.optimisationservice.model.entity.Recommendation;
 import com.hhovhann.optimisationservice.service.CampaignGroupService;
 import com.hhovhann.optimisationservice.service.CampaignService;
@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 
 import static com.hhovhann.optimisationservice.model.OptimisationStatus.APPLIED;
@@ -56,8 +57,8 @@ public class CampaignGroupController {
 
     @ResponseBody
     @GetMapping(value = "/campaigngroups/{campaignGroupId}/optimisations", produces = APPLICATION_JSON_VALUE)
-    public ResponseEntity<Optimisation> retrieveLatestOptimisationForCampaignGroup(@PathVariable Long campaignGroupId) {
-        Optional<Optimisation> optimisation = this.optimisationService.getLatestOptimisationForCampaignGroup(campaignGroupId);
+    public ResponseEntity<OptimisationDto> retrieveLatestOptimisationForCampaignGroup(@PathVariable Long campaignGroupId) {
+        Optional<OptimisationDto> optimisation = this.optimisationService.getLatestOptimisationForCampaignGroup(campaignGroupId);
 
         return optimisation.isEmpty() ? ResponseEntity.notFound().build() : ResponseEntity.ok().body(optimisation.get());
     }
@@ -73,16 +74,16 @@ public class CampaignGroupController {
     @ResponseBody
     @PostMapping(value = "/optimisations/{optimisationId}/recommendations", produces = APPLICATION_JSON_VALUE)
     public ResponseEntity<Map<String, String>> applyLatestRecommendation(@PathVariable Long optimisationId) {
-        Optional<Optimisation> optimisation = optimisationService.getOptimisation(optimisationId);
+        Optional<OptimisationDto> optimisation = optimisationService.getOptimisation(optimisationId);
         if (optimisation.isEmpty()) {
             return ResponseEntity.notFound().build();
-        } else if (optimisation.get().getStatus().equals(APPLIED)) {
+        } else if (Objects.equals(APPLIED.name(), optimisation.get().status())) {
             return ResponseEntity.ok().build();
         }
 
         List<Recommendation> recommendations = this.optimisationService.getLatestRecommendations(optimisationId);
-        var rowsUpdated = this.optimisationService.applyRecommendations(recommendations, optimisation.get());
+        var updatedCampaignsCount = this.optimisationService.applyRecommendations(recommendations, optimisation.get());
 
-        return ResponseEntity.ok().body(Map.of("message", "Updated Campaigns " + rowsUpdated));
+        return ResponseEntity.ok().body(Map.of("message", "Updated Campaigns " + updatedCampaignsCount));
     }
 }

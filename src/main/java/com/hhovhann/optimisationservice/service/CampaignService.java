@@ -1,7 +1,6 @@
 package com.hhovhann.optimisationservice.service;
 
 import com.hhovhann.optimisationservice.model.dto.CampaignDto;
-import com.hhovhann.optimisationservice.model.entity.Campaign;
 
 import java.math.BigDecimal;
 import java.util.List;
