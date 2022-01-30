@@ -4,7 +4,6 @@ import com.github.database.rider.core.api.configuration.DBUnit;
 import com.github.database.rider.core.api.dataset.DataSet;
 import com.github.database.rider.junit5.api.DBRider;
 import com.hhovhann.optimisationservice.model.dto.OptimisationDto;
-import com.hhovhann.optimisationservice.model.entity.Optimisation;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -12,7 +11,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import java.util.List;
 import java.util.Optional;
 
-import static com.hhovhann.optimisationservice.model.OptimisationStatus.NOT_APPLIED;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @DBRider
@@ -24,7 +22,7 @@ class OptimisationRepositoryTest {
     private OptimisationRepository optimisationRepository;
 
     @Test
-    @DataSet("optimisation/optimisations.yml")
+    @DataSet("datasets/optimisation/optimisations.yml")
     void shouldReturnListOfOptimisationDto_WhenOptimisationIdProvided() {
         List<OptimisationDto>optimisationDtos = optimisationRepository.findOptimisationDtoByCampaignGroupIdOrderByIdDesc_Named(1L);
 
@@ -38,7 +36,7 @@ class OptimisationRepositoryTest {
     }
 
     @Test
-    @DataSet("optimisation/optimisation.yml")
+    @DataSet("datasets/optimisation/optimisation.yml")
     void shouldReturnOptimisationDto_WhenOptimisationIdProvided() {
         Optional<OptimisationDto> optimisationDtoOptional = optimisationRepository.findOptimisationDtoById_Named(1L);
         OptimisationDto optimisationDto = optimisationDtoOptional.get();

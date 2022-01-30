@@ -1,6 +1,6 @@
 package com.hhovhann.optimisationservice.service;
 
-import com.hhovhann.optimisationservice.model.entity.CampaignGroup;
+import com.hhovhann.optimisationservice.model.dto.CampaignGroupDto;
 import com.hhovhann.optimisationservice.repository.CampaignGroupRepository;
 import org.springframework.stereotype.Service;
 
@@ -15,7 +15,7 @@ public class CampaignGroupServiceImpl implements CampaignGroupService {
     }
 
     @Override
-    public List<CampaignGroup> findAllCampaignGroups() {
-        return this.campaignGroupRepository.findAll();
+    public List<CampaignGroupDto> findAllCampaignGroups() {
+        return this.campaignGroupRepository.findAllCampaignGroupDto_Named();
     }
 }

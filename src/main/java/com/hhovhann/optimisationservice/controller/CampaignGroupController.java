@@ -1,6 +1,7 @@
 package com.hhovhann.optimisationservice.controller;
 
 import com.hhovhann.optimisationservice.model.dto.CampaignDto;
+import com.hhovhann.optimisationservice.model.dto.CampaignGroupDto;
 import com.hhovhann.optimisationservice.model.dto.OptimisationDto;
 import com.hhovhann.optimisationservice.model.entity.CampaignGroup;
 import com.hhovhann.optimisationservice.model.entity.Recommendation;
@@ -40,8 +41,8 @@ public class CampaignGroupController {
 
     @ResponseBody
     @GetMapping(value = "/campaigngroups", produces = APPLICATION_JSON_VALUE)
-    public ResponseEntity<List<CampaignGroup>> retrieveAllCampaignGroups() {
-        List<CampaignGroup> campaignGroups = campaignGroupService.findAllCampaignGroups();
+    public ResponseEntity<List<CampaignGroupDto>> retrieveAllCampaignGroups() {
+        List<CampaignGroupDto> campaignGroups = campaignGroupService.findAllCampaignGroups();
 
         return CollectionUtils.isEmpty(campaignGroups) ? ResponseEntity.notFound().build()
                 : ResponseEntity.ok().body(campaignGroups);

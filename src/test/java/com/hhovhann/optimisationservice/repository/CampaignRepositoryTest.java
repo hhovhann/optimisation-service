@@ -24,7 +24,7 @@ class CampaignRepositoryTest {
     private CampaignRepository campaignRepository;
 
     @Test
-    @DataSet("campaign/campaigns.yml")
+    @DataSet("datasets/campaign/campaigns.yml")
     void findByCampaignGroupId() {
         List<CampaignDto> campaigns = campaignRepository.findByCampaignGroupId(1L);
 
@@ -34,7 +34,7 @@ class CampaignRepositoryTest {
     }
 
     @Test
-    @DataSet(value = "campaign/campaign.yml")
+    @DataSet(value = "datasets/campaign/campaign.yml")
     void updateCampaign() {
         campaignRepository.updateCampaign(1L, BigDecimal.valueOf(70));
 

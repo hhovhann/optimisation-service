@@ -26,11 +26,11 @@ import javax.persistence.SqlResultSetMapping;
 
 @NamedNativeQuery(
         name = "Optimisation.findOptimisationDtoById_Named",
-        query = "SELECT optimisation.ID as id, optimisation.CAMPAIGN_GROUP_ID as campaignGroupId, optimisation.STATUS as status FROM Optimisation optimisation WHERE id = :id",
+        query = "SELECT optimisation.ID as id, optimisation.CAMPAIGN_GROUP_ID as campaignGroupId, optimisation.STATUS as status FROM OPTIMISATION optimisation WHERE id = :id",
         resultSetMapping = "Mapping.OptimisationDto")
 @NamedNativeQuery(
         name = "Optimisation.findOptimisationDtoByCampaignGroupIdOrderByIdDesc_Named",
-        query = "SELECT optimisation.ID as id, optimisation.CAMPAIGN_GROUP_ID as campaignGroupId, optimisation.STATUS as status FROM Optimisation optimisation WHERE CAMPAIGN_GROUP_ID = :campaignGroupId",
+        query = "SELECT optimisation.ID as id, optimisation.CAMPAIGN_GROUP_ID as campaignGroupId, optimisation.STATUS as status FROM OPTIMISATION optimisation WHERE CAMPAIGN_GROUP_ID = :campaignGroupId",
         resultSetMapping = "Mapping.OptimisationDto")
 @SqlResultSetMapping(
         name = "Mapping.OptimisationDto",

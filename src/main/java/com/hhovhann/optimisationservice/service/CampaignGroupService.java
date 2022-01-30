@@ -1,9 +1,9 @@
 package com.hhovhann.optimisationservice.service;
 
-import com.hhovhann.optimisationservice.model.entity.CampaignGroup;
+import com.hhovhann.optimisationservice.model.dto.CampaignGroupDto;
 
 import java.util.List;
 
 public interface CampaignGroupService {
-    List<CampaignGroup> findAllCampaignGroups();
+    List<CampaignGroupDto> findAllCampaignGroups();
 }

@@ -1,10 +1,13 @@
 # Description
-Optimizations Service system is takes a group of campaigns, associated within a campaign group, and performs an optimisation on them based on some criteria
+
+Optimizations Service system is takes a group of campaigns, associated within a campaign group, and performs an
+optimisation on them based on some criteria
 
 # Tech Stack
+
 * Java 17
-  * [source](https://www.oracle.com/java/technologies/javase/jdk17-archive-downloads.html)
-  * [documentation](https://docs.oracle.com/en/java/javase/17/)
+    * [source](https://www.oracle.com/java/technologies/javase/jdk17-archive-downloads.html)
+    * [documentation](https://docs.oracle.com/en/java/javase/17/)
 * [Spring Boot 2.6.3](https://spring.io/blog/2022/01/20/spring-boot-2-6-3-is-now-available)
 * [Junit 5.8.2](https://junit.org/junit5/docs/snapshot/release-notes/#release-notes-5.8.2)
 * [H2 1.4.200](http://www.h2database.com/html/quickstart.html)
@@ -12,11 +15,13 @@ Optimizations Service system is takes a group of campaigns, associated within a 
 * [DbRider 1.32.2](https://database-rider.github.io/database-rider/latest/documentation.html?theme=foundation)
 
 # Application Endpoints (Request/Response)
+
 To test endpoints feel free to use any of rest client tools
 
 * View all campaign groups
 
 Request
+
 ```
 curl -X 'GET' \
   'http://localhost:8888/api/v1/campaign/campaigngroups' \
@@ -24,6 +29,7 @@ curl -X 'GET' \
 ```
 
 Response Body
+
 ```
 [
   {
@@ -32,15 +38,18 @@ Response Body
   }
 ]
 ```
+
 * View all campaigns for a campaign group
 
 Request
+
 ```curl -X 'GET' \
   'http://localhost:8888/api/v1/campaign/campaigngroups/1/campaigns' \
   -H 'accept: application/json'
 ```
 
 Response Body
+
 ```
 [
   {
@@ -137,12 +146,15 @@ Response Body
 * View latest optimisations for a campaign group
 
 Request
+
 ```
 curl -X 'GET' \
   'http://localhost:8888/api/v1/campaign/campaigngroups/1/optimisations' \
   -H 'accept: application/json'
 ```
+
 Response Body
+
 ```
 {
   "id": 1,
@@ -154,12 +166,15 @@ Response Body
 * View latest recommendations for an optimisation
 
 Request
+
 ```
 curl -X 'GET' \
   'http://localhost:8888/api/v1/campaign/optimisations/1/recommendations' \
   -H 'accept: application/json'
 ```
+
 Response Body
+
 ```
 [
   {
@@ -234,6 +249,7 @@ Response Body
 * Apply latest optimisation to campaigns
 
 Request
+
 ```
 curl -X 'POST' \
   'http://localhost:8888/api/v1/campaign/optimisations/1/recommendations' \
@@ -242,6 +258,7 @@ curl -X 'POST' \
 ```
 
 Response Body
+
 ```
 {
   "message": "Updated Campaigns 11"
@@ -251,21 +268,24 @@ Response Body
 Feel free if you want to use [OpenAPI Client](http://localhost:8888/swagger-ui/index.html#/) for testing endpoints.
 
 # How to run application and tests
+
 - /scripts/run.sh running the application from terminal or from IDEA and open in browser http://localhost:8888
 - /scripts/run-tests.sh running all existing and enabled tests
 
 # References
+
 - Many Thanks to [walshdanny](https://github.com/walshdanny700/campaign_optimisation) and his invented bicycle for reuse
 - [How do I apply recommendations?](https://help.optily.app/en/articles/4550288-how-do-i-apply-recommendations)
 - Many thanks [Throben Janssen](https://thorben-janssen.com/) for following solutions
-  - [Result Set Mapping: Constructor Result Mappings](https://thorben-janssen.com/result-set-mapping-constructor-result-mappings/)
-  - [Spring Data JPA – How to Return DTOs from Native Queries](https://thorben-janssen.com/spring-data-jpa-dto-native-queries/#NamedNativeQuery_with_an_SqlResultSetMapping)
+    - [Result Set Mapping: Constructor Result Mappings](https://thorben-janssen.com/result-set-mapping-constructor-result-mappings/)
+    - [Spring Data JPA – How to Return DTOs from Native Queries](https://thorben-janssen.com/spring-data-jpa-dto-native-queries/#NamedNativeQuery_with_an_SqlResultSetMapping)
+    - [Lombok & Hibernate: How to Avoid Common Pitfalls](https://thorben-janssen.com/lombok-hibernate-how-to-avoid-common-pitfalls/)
 
 # Nice To have
-- Avoid using Lombok in entity. [Recommendations](https://thorben-janssen.com/lombok-hibernate-how-to-avoid-common-pitfalls/)
-- Using DTO for response, now only support with CampaignDto (Good place for Java records). [Recommendations](https://thorben-janssen.com/java-records-hibernate-jpa/)
+
 - Batch support (need to add sequence generators for id when will have support for batch add/remove)
-- May have csv data processor (DataProcessorFactory and proper implementations for csv, xml, etc), which may take csv file and seed the database now we have that part extracted in script which using flyway
+- May have csv data processor (DataProcessorFactory and proper implementations for csv, xml, etc), which may take csv
+  file and seed the database now we have that part extracted in script which using flyway
 - Cashing for all campaigns could be added for performance reason if campaing size are very big
 - DBRider Integration - Added some repository tests with DbRider help :)
 - Add flow chart and erm diagram
