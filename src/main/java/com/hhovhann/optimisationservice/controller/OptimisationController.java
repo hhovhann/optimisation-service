@@ -1,7 +1,7 @@
 package com.hhovhann.optimisationservice.controller;
 
 import com.hhovhann.optimisationservice.model.dto.OptimisationDto;
-import com.hhovhann.optimisationservice.model.entity.Recommendation;
+import com.hhovhann.optimisationservice.model.dto.RecommendationDto;
 import com.hhovhann.optimisationservice.service.OptimisationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -28,8 +28,8 @@ public class OptimisationController {
 
     @ResponseBody
     @GetMapping(value = "/optimisations/{optimisationId}/recommendations", produces = APPLICATION_JSON_VALUE)
-    public ResponseEntity<List<Recommendation>> retrieveLatestRecommendationsForOptimisation(@PathVariable Long optimisationId) {
-        List<Recommendation> recommendations = this.optimisationService.getLatestRecommendations(optimisationId);
+    public ResponseEntity<List<RecommendationDto>> retrieveLatestRecommendationsForOptimisation(@PathVariable Long optimisationId) {
+        List<RecommendationDto> recommendations = this.optimisationService.getLatestRecommendations(optimisationId);
 
         return recommendations.isEmpty() ? ResponseEntity.notFound().build() : ResponseEntity.ok().body(recommendations);
     }
@@ -44,7 +44,7 @@ public class OptimisationController {
             return ResponseEntity.ok().build();
         }
 
-        List<Recommendation> recommendations = this.optimisationService.getLatestRecommendations(optimisationId);
+        List<RecommendationDto> recommendations = this.optimisationService.getLatestRecommendations(optimisationId);
         var updatedCampaignsCount = this.optimisationService.applyRecommendations(recommendations, optimisation.get());
 
         return ResponseEntity.ok().body(Map.of("message", "Updated Campaigns " + updatedCampaignsCount));

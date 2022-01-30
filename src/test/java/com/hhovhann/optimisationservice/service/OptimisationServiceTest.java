@@ -2,10 +2,10 @@ package com.hhovhann.optimisationservice.service;
 
 import com.hhovhann.optimisationservice.model.OptimisationStatus;
 import com.hhovhann.optimisationservice.model.dto.CampaignDto;
+import com.hhovhann.optimisationservice.model.dto.CampaignGroupDto;
 import com.hhovhann.optimisationservice.model.dto.OptimisationDto;
-import com.hhovhann.optimisationservice.model.entity.CampaignGroup;
+import com.hhovhann.optimisationservice.model.dto.RecommendationDto;
 import com.hhovhann.optimisationservice.model.entity.Optimisation;
-import com.hhovhann.optimisationservice.model.entity.Recommendation;
 import com.hhovhann.optimisationservice.repository.CampaignRepository;
 import com.hhovhann.optimisationservice.repository.OptimisationRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -43,40 +43,35 @@ class OptimisationServiceTest {
     @MockBean
     OptimisationRepository optimisationRepository;
 
-    private Optimisation optimisation;
-    private OptimisationDto optimisationDto;
-    private Recommendation recommendation_1, recommendation_2;
-    private CampaignDto campaign_1, campaign_2;
-    private CampaignGroup campaignGroup;
+    private Optimisation optimisationWithStatusApplied;
+    private Optimisation optimisationWithStatusNotApplied;
+    private OptimisationDto optimisationDtoWithStatusApplied, optimisationDtoWithStatusNotApplied;
+    private RecommendationDto recommendationDtoOne, recommendationDtoTwo;
+    private CampaignDto campaignDtoOne, campaignDtoTwo;
+    private CampaignGroupDto campaignGroup;
 
     @BeforeEach
     public void setup() {
-        this.campaignGroup = CampaignGroup.builder()
-                .id(1L)
-                .name("Campaign Group One").build();
+        this.campaignGroup = new CampaignGroupDto(1L, "Campaign Group One");
 
-        this.campaign_1 = new CampaignDto(1L, "Fist Campaign", this.campaignGroup.getId(), BigDecimal.TEN, 10D, BigDecimal.TEN);
-        this.campaign_2 = new CampaignDto(2L, "Second Campaign", this.campaignGroup.getId(), BigDecimal.TEN, 40D, BigDecimal.TEN);
+        this.campaignDtoOne = new CampaignDto(1L, "Fist Campaign", this.campaignGroup.id(), BigDecimal.TEN, 10D, BigDecimal.TEN);
+        this.campaignDtoTwo = new CampaignDto(2L, "Second Campaign", this.campaignGroup.id(), BigDecimal.TEN, 40D, BigDecimal.TEN);
 
-        this.optimisationDto = new OptimisationDto(1L, this.campaignGroup.getId(), APPLIED.name());
-        this.optimisation = new Optimisation(this.optimisationDto.id(), this.optimisationDto.campaignGroupId(), OptimisationStatus.valueOf(this.optimisationDto.status()));
-        this.recommendation_1 = Recommendation.builder()
-                .campaignId(this.campaign_1.id())
-                .optimisationId(this.optimisationDto.id())
-                .recommendedBudget(BigDecimal.valueOf(4D)).build();
+        this.optimisationDtoWithStatusApplied = new OptimisationDto(1L, this.campaignGroup.id(), APPLIED.name());
+        this.optimisationDtoWithStatusNotApplied = new OptimisationDto(2L, this.campaignGroup.id(), NOT_APPLIED.name());
 
-        this.recommendation_2 = Recommendation.builder()
-                .campaignId(this.campaign_2.id())
-                .optimisationId(this.optimisationDto.id())
-                .recommendedBudget(BigDecimal.valueOf(16D)).build();
+        this.optimisationWithStatusApplied = new Optimisation(this.optimisationDtoWithStatusApplied.id(), this.optimisationDtoWithStatusApplied.campaignGroupId(), OptimisationStatus.valueOf(this.optimisationDtoWithStatusApplied.status()));
+        this.optimisationWithStatusNotApplied = new Optimisation(this.optimisationDtoWithStatusNotApplied.id(), this.optimisationDtoWithStatusNotApplied.campaignGroupId(), OptimisationStatus.valueOf(this.optimisationDtoWithStatusNotApplied.status()));
+
+        this.recommendationDtoOne = new RecommendationDto(1L, this.campaignDtoOne.id(), this.optimisationDtoWithStatusNotApplied.id(), BigDecimal.valueOf(4D));
+        this.recommendationDtoTwo = new RecommendationDto(2L, this.campaignDtoTwo.id(), this.optimisationDtoWithStatusNotApplied.id(), BigDecimal.valueOf(16D));
     }
 
     @Test
-    @DisplayName("Retrieve optimisation when optimisation id is provided")
     void givenOptimisation_whenGetOptimisation_thenReturnExistingOptimisation() {
-        OptimisationDto expectedOptimisation = this.optimisationDto;
-        Mockito.when(optimisationRepository.findOptimisationDtoById_Named(this.optimisationDto.id())).thenReturn(Optional.of(this.optimisationDto));
-        OptimisationDto actualOptimisation = this.optimisationService.getOptimisation(this.optimisationDto.id()).get();
+        OptimisationDto expectedOptimisation = this.optimisationDtoWithStatusApplied;
+        Mockito.when(optimisationRepository.findOptimisationDtoById_Named(this.optimisationDtoWithStatusApplied.id())).thenReturn(Optional.of(this.optimisationDtoWithStatusApplied));
+        OptimisationDto actualOptimisation = this.optimisationService.getOptimisation(this.optimisationDtoWithStatusApplied.id()).get();
 
         assertEquals(expectedOptimisation.id(), actualOptimisation.id());
         assertEquals(expectedOptimisation.campaignGroupId(), actualOptimisation.campaignGroupId());
@@ -84,12 +79,11 @@ class OptimisationServiceTest {
     }
 
     @Test
-    @DisplayName("Retrieve all recommendations when optimisation status not applied")
     void givenCampaignGroup_whenGetLatestOptimisationForCampaignGroup_thenReturnExistingOptimisation() {
-        OptimisationDto expectedOptimisation = this.optimisationDto;
-        Mockito.when(optimisationRepository.findOptimisationDtoByCampaignGroupIdOrderByIdDesc_Named(this.campaignGroup.getId())).thenReturn(Collections.singletonList(this.optimisationDto));
+        OptimisationDto expectedOptimisation = this.optimisationDtoWithStatusApplied;
+        Mockito.when(optimisationRepository.findOptimisationDtoByCampaignGroupIdOrderByIdDesc_Named(this.campaignGroup.id())).thenReturn(Collections.singletonList(this.optimisationDtoWithStatusApplied));
 
-        OptimisationDto actualOptimisation = this.optimisationService.getLatestOptimisationForCampaignGroup(this.campaignGroup.getId()).get();
+        OptimisationDto actualOptimisation = this.optimisationService.getLatestOptimisationForCampaignGroup(this.campaignGroup.id()).get();
 
         assertEquals(expectedOptimisation.id(), actualOptimisation.id());
         assertEquals(expectedOptimisation.campaignGroupId(), actualOptimisation.campaignGroupId());
@@ -99,32 +93,35 @@ class OptimisationServiceTest {
     @Test
     @DisplayName("Retrieve all recommendations when optimisation status not applied")
     void givenRecommendations_whenGetLatestRecommendations_thenReturnAllRecommendations() {
-        List<Recommendation> expectedRecommendations = List.of(this.recommendation_1, this.recommendation_2);
-        Mockito.when(this.campaignRepository.findByCampaignGroupId(optimisationDto.campaignGroupId())).thenReturn(List.of(this.campaign_1, this.campaign_2));
-        Mockito.when(optimisationRepository.findOptimisationDtoById_Named(this.optimisationDto.id())).thenReturn(Optional.of(this.optimisationDto));
+        List<RecommendationDto> expectedRecommendations = List.of(this.recommendationDtoOne, this.recommendationDtoTwo);
 
-        List<Recommendation> actualRecommendations = this.optimisationService.getLatestRecommendations(this.optimisationDto.id());
+        Mockito.when(this.campaignRepository.findByCampaignGroupId(optimisationDtoWithStatusNotApplied.campaignGroupId()))
+                .thenReturn(List.of(this.campaignDtoOne, this.campaignDtoTwo));
 
-        assertEquals(expectedRecommendations.size(), actualRecommendations.size());
-        assertEquals(expectedRecommendations.get(0).getCampaignId(), actualRecommendations.get(0).getCampaignId());
-        assertEquals(expectedRecommendations.get(0).getOptimisationId(), actualRecommendations.get(0).getOptimisationId());
-        assertEquals(expectedRecommendations.get(0).getRecommendedBudget(), actualRecommendations.get(0).getRecommendedBudget());
-        assertEquals(expectedRecommendations.get(1).getCampaignId(), actualRecommendations.get(1).getCampaignId());
-        assertEquals(expectedRecommendations.get(1).getOptimisationId(), actualRecommendations.get(1).getOptimisationId());
-        assertEquals(expectedRecommendations.get(1).getRecommendedBudget(), actualRecommendations.get(1).getRecommendedBudget());
+        Mockito.when(optimisationRepository.findOptimisationDtoById_Named(this.optimisationDtoWithStatusNotApplied.id()))
+                .thenReturn(Optional.of(this.optimisationDtoWithStatusNotApplied));
+
+        List<RecommendationDto> actualRecommendations = this.optimisationService.getLatestRecommendations(this.optimisationDtoWithStatusNotApplied.id());
+
+        assertEquals(expectedRecommendations.get(0).campaignId(), actualRecommendations.get(0).campaignId());
+        assertEquals(expectedRecommendations.get(0).optimisationId(), actualRecommendations.get(0).optimisationId());
+        assertEquals(expectedRecommendations.get(0).recommendedBudget(), actualRecommendations.get(0).recommendedBudget());
+        assertEquals(expectedRecommendations.get(1).campaignId(), actualRecommendations.get(1).campaignId());
+        assertEquals(expectedRecommendations.get(1).optimisationId(), actualRecommendations.get(1).optimisationId());
+        assertEquals(expectedRecommendations.get(1).recommendedBudget(), actualRecommendations.get(1).recommendedBudget());
     }
 
     @Test
     @DisplayName("Updated raws by count of given recommendations when optimisation status not applied")
     void givenRecommendations_whenApplyLatestRecommendations_thenReturnUpdatedRaws() {
-        List<Recommendation> recommendations = List.of(this.recommendation_1, this.recommendation_2);
-        Optimisation optimisation = this.optimisation;
-        when(this.campaignService.updateCampaign(this.recommendation_1.getCampaignId(), this.recommendation_1.getRecommendedBudget())).thenReturn(1);
-        when(this.campaignService.updateCampaign(this.recommendation_2.getCampaignId(), this.recommendation_2.getRecommendedBudget())).thenReturn(1);
+        List<RecommendationDto> recommendations = List.of(this.recommendationDtoOne, this.recommendationDtoTwo);
+        Optimisation optimisation = this.optimisationWithStatusApplied;
+        when(this.campaignService.updateCampaign(this.recommendationDtoOne.campaignId(), this.recommendationDtoOne.recommendedBudget())).thenReturn(1);
+        when(this.campaignService.updateCampaign(this.recommendationDtoTwo.campaignId(), this.recommendationDtoTwo.recommendedBudget())).thenReturn(1);
         when(this.optimisationRepository.save(optimisation)).thenReturn(optimisation);
         doNothing().when(this.recommendationService).storeRecommendations(recommendations);
 
-        int updatedRaws = this.optimisationService.applyRecommendations(recommendations, this.optimisationDto);
+        int updatedRaws = this.optimisationService.applyRecommendations(recommendations, this.optimisationDtoWithStatusApplied);
 
         assertEquals(updatedRaws, recommendations.size());
 

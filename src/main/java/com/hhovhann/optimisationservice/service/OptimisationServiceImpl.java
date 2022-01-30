@@ -2,8 +2,8 @@ package com.hhovhann.optimisationservice.service;
 
 import com.hhovhann.optimisationservice.model.dto.CampaignDto;
 import com.hhovhann.optimisationservice.model.dto.OptimisationDto;
+import com.hhovhann.optimisationservice.model.dto.RecommendationDto;
 import com.hhovhann.optimisationservice.model.entity.Optimisation;
-import com.hhovhann.optimisationservice.model.entity.Recommendation;
 import com.hhovhann.optimisationservice.repository.CampaignRepository;
 import com.hhovhann.optimisationservice.repository.OptimisationRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import javax.transaction.Transactional;
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
@@ -46,9 +47,9 @@ public class OptimisationServiceImpl implements OptimisationService {
         return Optional.of(optimisations.get(0));
     }
 
-    public List<Recommendation> getLatestRecommendations(Long optimisationId) {
+    public List<RecommendationDto> getLatestRecommendations(Long optimisationId) {
         Optional<OptimisationDto> optimisationOptional = this.optimisationRepository.findOptimisationDtoById_Named(optimisationId);
-        if (optimisationOptional.isEmpty() || optimisationOptional.get().status().equals(APPLIED)) {
+        if (optimisationOptional.isEmpty() || Objects.equals(APPLIED.name(), optimisationOptional.get().status())) {
             return emptyList();
         }
 
@@ -61,25 +62,21 @@ public class OptimisationServiceImpl implements OptimisationService {
         return generateLatestRecommendations(campaigns, optimisation);
     }
 
-    public List<Recommendation> generateLatestRecommendations(List<CampaignDto> campaign, OptimisationDto optimisation) {
+    public List<RecommendationDto> generateLatestRecommendations(List<CampaignDto> campaign, OptimisationDto optimisation) {
         double impressions = campaign.stream().mapToDouble(CampaignDto::impressions).sum();
         BigDecimal budgets = campaign.stream().map(CampaignDto::budget).reduce(BigDecimal.ZERO, BigDecimal::add);
 
-        return campaign.stream()
-                .map(currentCampaign -> Recommendation.builder()
-                        .campaignId(currentCampaign.id())
-                        .optimisationId(optimisation.id())
-                        .recommendedBudget(calculateRecommendedBudget(budgets, currentCampaign.impressions(), impressions))
-                        .build())
-                .collect(Collectors.toList());
+        return campaign.stream().map(
+                currentCampaign -> new RecommendationDto(null, currentCampaign.id(), optimisation.id(), calculateRecommendedBudget(budgets, currentCampaign.impressions(), impressions))
+        ).collect(Collectors.toList());
     }
 
     @Override
     @Transactional
-    public int applyRecommendations(List<Recommendation> recommendations, OptimisationDto optimisationDto) {
+    public int applyRecommendations(List<RecommendationDto> recommendations, OptimisationDto optimisationDto) {
         AtomicInteger rowsUpdated = new AtomicInteger();
         recommendations.forEach(recommendation ->
-                rowsUpdated.set(rowsUpdated.get() + campaignService.updateCampaign(recommendation.getCampaignId(), recommendation.getRecommendedBudget())));
+                rowsUpdated.set(rowsUpdated.get() + campaignService.updateCampaign(recommendation.campaignId(), recommendation.recommendedBudget())));
 
         recommendationService.storeRecommendations(recommendations);
 
