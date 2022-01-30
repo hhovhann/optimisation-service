@@ -257,6 +257,9 @@ Feel free if you want to use [OpenAPI Client](http://localhost:8888/swagger-ui/i
 # References
 - Many Thanks to [walshdanny](https://github.com/walshdanny700/campaign_optimisation) and his invented bicycle for reuse
 - [How do I apply recommendations?](https://help.optily.app/en/articles/4550288-how-do-i-apply-recommendations)
+- Many thanks [Throben Janssen](https://thorben-janssen.com/) for following solutions
+  - [Result Set Mapping: Constructor Result Mappings](https://thorben-janssen.com/result-set-mapping-constructor-result-mappings/)
+  - [Spring Data JPA – How to Return DTOs from Native Queries](https://thorben-janssen.com/spring-data-jpa-dto-native-queries/#NamedNativeQuery_with_an_SqlResultSetMapping)
 
 # Nice To have
 - Avoid using Lombok in entity. [Recommendations](https://thorben-janssen.com/lombok-hibernate-how-to-avoid-common-pitfalls/)
@@ -269,4 +272,4 @@ Feel free if you want to use [OpenAPI Client](http://localhost:8888/swagger-ui/i
 - Test Container integrations
 - OpenApi documentation specification improvement for all methods
 - Add more test cases to cover all business logic
-- And many more which will improve this nice applcication :)
+- And many more which will improve this nice application :)
