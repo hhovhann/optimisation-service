@@ -259,6 +259,7 @@ Feel free if you want to use [OpenAPI Client](http://localhost:8888/swagger-ui/i
 - [How do I apply recommendations?](https://help.optily.app/en/articles/4550288-how-do-i-apply-recommendations)
 
 # Nice To have
+- Avoid using Lombok in entity. [Reckomendations](https://thorben-janssen.com/lombok-hibernate-how-to-avoid-common-pitfalls/)
 - Batch support (need to add sequence generation for entity id's which would use batch :)
 - May have csv data processor (DataProcessorFactory and proper implementations for csv, xml, etc), which may take csv file and seed the database now we have that part extracted in script which using flyway
 - Cashing for all campaigns could be added for performance reason if campaing size are very big
