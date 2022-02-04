@@ -10,7 +10,6 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Optional;
 
 import static com.hhovhann.optimisationservice.model.OptimisationStatus.APPLIED;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
@@ -29,9 +28,7 @@ public class OptimisationController {
     @ResponseBody
     @GetMapping(value = "/optimisations/{optimisationId}/recommendations", produces = APPLICATION_JSON_VALUE)
     public ResponseEntity<List<RecommendationDto>> retrieveLatestRecommendationsForOptimisation(@PathVariable Long optimisationId) {
-        List<RecommendationDto> recommendations = this.optimisationService.getLatestRecommendations(optimisationId);
-
-        return recommendations.isEmpty() ? ResponseEntity.notFound().build() : ResponseEntity.ok().body(recommendations);
+        return ResponseEntity.ok().body(this.optimisationService.getLatestRecommendations(optimisationId));
     }
 
     @ResponseBody

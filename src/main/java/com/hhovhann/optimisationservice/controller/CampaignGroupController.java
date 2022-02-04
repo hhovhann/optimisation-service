@@ -8,11 +8,13 @@ import com.hhovhann.optimisationservice.service.CampaignService;
 import com.hhovhann.optimisationservice.service.OptimisationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.util.CollectionUtils;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
-import java.util.Optional;
 
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
@@ -37,25 +39,18 @@ public class CampaignGroupController {
     @ResponseBody
     @GetMapping(value = "/campaigngroups", produces = APPLICATION_JSON_VALUE)
     public ResponseEntity<List<CampaignGroupDto>> retrieveAllCampaignGroups() {
-        List<CampaignGroupDto> campaignGroups = campaignGroupService.findAllCampaignGroups();
-
-        return CollectionUtils.isEmpty(campaignGroups) ? ResponseEntity.notFound().build()
-                : ResponseEntity.ok().body(campaignGroups);
+        return ResponseEntity.ok().body(campaignGroupService.findAllCampaignGroups());
     }
 
     @ResponseBody
     @GetMapping(value = "/campaigngroups/{campaignGroupId}/campaigns", produces = APPLICATION_JSON_VALUE)
     public ResponseEntity<List<CampaignDto>> retrieveAllCampaignsForCampaignGroup(@PathVariable Long campaignGroupId) {
-        List<CampaignDto> campaigns = campaignService.getCampaignsForCampaignGroup(campaignGroupId);
-
-        return campaigns.isEmpty() ? ResponseEntity.notFound().build() : ResponseEntity.ok().body(campaigns);
+        return ResponseEntity.ok().body(campaignService.getCampaignsForCampaignGroup(campaignGroupId));
     }
 
     @ResponseBody
     @GetMapping(value = "/campaigngroups/{campaignGroupId}/optimisations", produces = APPLICATION_JSON_VALUE)
     public ResponseEntity<OptimisationDto> retrieveLatestOptimisationForCampaignGroup(@PathVariable Long campaignGroupId) {
-        Optional<OptimisationDto> optimisation = this.optimisationService.getLatestOptimisationForCampaignGroup(campaignGroupId);
-
-        return optimisation.isEmpty() ? ResponseEntity.notFound().build() : ResponseEntity.ok().body(optimisation.get());
+        return ResponseEntity.ok().body(this.optimisationService.getLatestOptimisationForCampaignGroup(campaignGroupId));
     }
 }

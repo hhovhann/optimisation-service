@@ -1,7 +1,10 @@
 package com.hhovhann.optimisationservice.exception;
 
+import java.io.Serial;
+
 public class OptimisationServiceValidationException extends RuntimeException {
-    private static final long serialVersionUID = -9038935358708640825L;
+    @Serial
+    private static final long serialVersionUID = -1365449883298233191L;
 
     public OptimisationServiceValidationException() {
         super();

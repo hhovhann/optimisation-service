@@ -1,8 +1,10 @@
 package com.hhovhann.optimisationservice.service;
 
+import com.hhovhann.optimisationservice.exception.CampaignGroupNotFoundException;
 import com.hhovhann.optimisationservice.model.dto.CampaignGroupDto;
 import com.hhovhann.optimisationservice.repository.CampaignGroupRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 
 import java.util.List;
 
@@ -16,6 +18,10 @@ public class CampaignGroupServiceImpl implements CampaignGroupService {
 
     @Override
     public List<CampaignGroupDto> findAllCampaignGroups() {
-        return campaignGroupRepository.findAllCampaignGroupDto_Named();
+        List<CampaignGroupDto> campaignGroupDtos = campaignGroupRepository.findAllCampaignGroupDto_Named();
+        if (campaignGroupDtos.isEmpty()) {
+            throw new CampaignGroupNotFoundException("No campaign group found by provided id");
+        }
+        return campaignGroupDtos;
     }
 }

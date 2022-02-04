@@ -1,5 +1,6 @@
 package com.hhovhann.optimisationservice.service;
 
+import com.hhovhann.optimisationservice.exception.CampaignNotFoundException;
 import com.hhovhann.optimisationservice.exception.OptimisationNotFoundException;
 import com.hhovhann.optimisationservice.model.dto.CampaignDto;
 import com.hhovhann.optimisationservice.model.dto.OptimisationDto;
@@ -14,7 +15,6 @@ import javax.transaction.Transactional;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
@@ -45,20 +45,25 @@ public class OptimisationServiceImpl implements OptimisationService {
     }
 
     @Override
-    public Optional<OptimisationDto> getLatestOptimisationForCampaignGroup(Long campaignGroupId) {
+    public OptimisationDto getLatestOptimisationForCampaignGroup(Long campaignGroupId) {
         List<OptimisationDto> optimisations = optimisationRepository.findOptimisationDtoByCampaignGroupIdOrderByIdDesc_Named(campaignGroupId);
-        return Optional.of(optimisations.get(0));
+        if (optimisations.isEmpty()) {
+            throw new OptimisationNotFoundException("No optimisation found by provided id");
+        }
+        return optimisations.get(0);
     }
 
     public List<RecommendationDto> getLatestRecommendations(Long optimisationId) {
-        Optional<OptimisationDto> optimisationOptional = this.optimisationRepository.findOptimisationDtoById_Named(optimisationId);
-        if (optimisationOptional.isEmpty() || Objects.equals(APPLIED.name(), optimisationOptional.get().status())) {
-            return emptyList();
-        }
+        OptimisationDto optimisation = this.optimisationRepository.findOptimisationDtoById_Named(optimisationId)
+                .orElseThrow(() -> new OptimisationNotFoundException("No optimisation found by provided id"));
 
-        OptimisationDto optimisation = optimisationOptional.get();
         List<CampaignDto> campaigns = this.campaignRepository.findByCampaignGroupId(optimisation.campaignGroupId());
         if (campaigns.isEmpty()) {
+            throw new CampaignNotFoundException("No campaign found by provided id");
+        }
+
+
+        if (Objects.equals(APPLIED.name(), optimisation.status())) {
             return emptyList();
         }
 

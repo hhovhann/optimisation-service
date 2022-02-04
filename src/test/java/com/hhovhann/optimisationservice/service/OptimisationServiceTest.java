@@ -83,7 +83,7 @@ class OptimisationServiceTest {
         OptimisationDto expectedOptimisation = this.optimisationDtoWithStatusApplied;
         Mockito.when(optimisationRepository.findOptimisationDtoByCampaignGroupIdOrderByIdDesc_Named(this.campaignGroup.id())).thenReturn(Collections.singletonList(this.optimisationDtoWithStatusApplied));
 
-        OptimisationDto actualOptimisation = this.optimisationService.getLatestOptimisationForCampaignGroup(this.campaignGroup.id()).get();
+        OptimisationDto actualOptimisation = this.optimisationService.getLatestOptimisationForCampaignGroup(this.campaignGroup.id());
 
         assertEquals(expectedOptimisation.id(), actualOptimisation.id());
         assertEquals(expectedOptimisation.campaignGroupId(), actualOptimisation.campaignGroupId());

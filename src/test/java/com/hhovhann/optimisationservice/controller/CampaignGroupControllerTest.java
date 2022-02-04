@@ -1,13 +1,12 @@
 package com.hhovhann.optimisationservice.controller;
 
+import com.hhovhann.optimisationservice.exception.OptimisationNotFoundException;
 import com.hhovhann.optimisationservice.model.OptimisationStatus;
 import com.hhovhann.optimisationservice.model.dto.CampaignDto;
 import com.hhovhann.optimisationservice.model.dto.CampaignGroupDto;
 import com.hhovhann.optimisationservice.model.dto.OptimisationDto;
-import com.hhovhann.optimisationservice.model.entity.Recommendation;
 import com.hhovhann.optimisationservice.repository.CampaignGroupRepository;
 import com.hhovhann.optimisationservice.repository.CampaignRepository;
-import com.hhovhann.optimisationservice.repository.OptimisationRepository;
 import com.hhovhann.optimisationservice.service.OptimisationService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -20,8 +19,6 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import java.math.BigDecimal;
 import java.util.Collections;
-
-import static java.util.Optional.empty;
 import static org.hamcrest.Matchers.is;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
@@ -51,19 +48,11 @@ class CampaignGroupControllerTest {
 
     private OptimisationDto optimisationDto;
 
-    private Recommendation recommendation;
-
     @BeforeEach
     public void setup() {
         this.campaignGroupDto = new CampaignGroupDto(1L, "Campaign Group One");
         this.campaignDto = new CampaignDto(1L, "Fist Campaign", this.campaignGroupDto.id(), BigDecimal.ONE, 123D, BigDecimal.TEN);
         this.optimisationDto = new OptimisationDto(1L, this.campaignGroupDto.id(),OptimisationStatus.NOT_APPLIED.name());
-
-        this.recommendation = Recommendation.builder()
-                .id(1L)
-                .campaignId(this.campaignDto.id())
-                .optimisationId(this.optimisationDto.id())
-                .recommendedBudget(BigDecimal.TEN).build();
     }
 
     @Test
@@ -115,7 +104,7 @@ class CampaignGroupControllerTest {
     @Test
     void givenCampaignGroupId_whenOptimisationsForGroup_thenReturnJsonArray() throws Exception {
         given(this.optimisationService.getLatestOptimisationForCampaignGroup(any()))
-                .willReturn(java.util.Optional.ofNullable(this.optimisationDto));
+                .willReturn(this.optimisationDto);
 
         mockMvc.perform(get("/api/v1/campaigngroups/{campaignGroupId}/optimisations", 1))
                 .andDo(print())
@@ -128,7 +117,7 @@ class CampaignGroupControllerTest {
 
     @Test
     void givenCampaignGroupId_whenZeroOptimisationsForGroup_thenReturnNotFound() throws Exception {
-        given(this.optimisationService.getLatestOptimisationForCampaignGroup(any())).willReturn(empty());
+        given(this.optimisationService.getLatestOptimisationForCampaignGroup(any())).willThrow(new OptimisationNotFoundException("No optimisation found by provided id"));
 
         mockMvc.perform(get("/api/v1/campaigngroups/{campaignGroupId}/optimisations", 1))
                 .andExpect(status().isNotFound());

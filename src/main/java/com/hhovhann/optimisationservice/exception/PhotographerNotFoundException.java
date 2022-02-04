@@ -1,6 +1,9 @@
 package com.hhovhann.optimisationservice.exception;
 
+import java.io.Serial;
+
 public class PhotographerNotFoundException extends RuntimeException {
+    @Serial
     private static final long serialVersionUID = 4285341894354118776L;
 
     public PhotographerNotFoundException() {

@@ -75,7 +75,7 @@ class OptimisationControllerTest {
 
     @Test
     void givenOptimisationId_whenZeroRecommendationsForOptimisation_thenReturnNotFound() throws Exception {
-        given(this.optimisationService.getLatestRecommendations(any())).willReturn(Collections.emptyList());
+        given(this.optimisationService.getLatestRecommendations(any())).willThrow(new OptimisationNotFoundException("No optimisation found by provided id"));
 
         mockMvc.perform(get("/api/v1/optimisations/{optimisationId}/recommendations", 1))
                 .andExpect(status().isNotFound());
