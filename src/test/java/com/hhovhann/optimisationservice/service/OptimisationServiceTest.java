@@ -43,8 +43,7 @@ class OptimisationServiceTest {
     @MockBean
     OptimisationRepository optimisationRepository;
 
-    private Optimisation optimisationWithStatusApplied;
-    private Optimisation optimisationWithStatusNotApplied;
+    private Optimisation optimisationWithStatusApplied, optimisationWithStatusNotApplied;
     private OptimisationDto optimisationDtoWithStatusApplied, optimisationDtoWithStatusNotApplied;
     private RecommendationDto recommendationDtoOne, recommendationDtoTwo;
     private CampaignDto campaignDtoOne, campaignDtoTwo;
@@ -70,7 +69,7 @@ class OptimisationServiceTest {
     @Test
     void givenOptimisation_whenGetOptimisation_thenReturnExistingOptimisation() {
         OptimisationDto expectedOptimisation = this.optimisationDtoWithStatusApplied;
-        Mockito.when(optimisationRepository.findOptimisationDtoById_Named(this.optimisationDtoWithStatusApplied.id())).thenReturn(Optional.of(this.optimisationDtoWithStatusApplied));
+        Mockito.when(optimisationRepository.findById(this.optimisationDtoWithStatusApplied.id())).thenReturn(Optional.of(this.optimisationWithStatusApplied));
         OptimisationDto actualOptimisation = this.optimisationService.getOptimisation(this.optimisationDtoWithStatusApplied.id());
 
         assertEquals(expectedOptimisation.id(), actualOptimisation.id());
@@ -81,7 +80,7 @@ class OptimisationServiceTest {
     @Test
     void givenCampaignGroup_whenGetLatestOptimisationForCampaignGroup_thenReturnExistingOptimisation() {
         OptimisationDto expectedOptimisation = this.optimisationDtoWithStatusApplied;
-        Mockito.when(optimisationRepository.findOptimisationDtoByCampaignGroupIdOrderByIdDesc_Named(this.campaignGroup.id())).thenReturn(Collections.singletonList(this.optimisationDtoWithStatusApplied));
+        Mockito.when(optimisationRepository.findByCampaignGroupIdOrderByIdDesc(this.campaignGroup.id())).thenReturn(Collections.singletonList(this.optimisationWithStatusApplied));
 
         OptimisationDto actualOptimisation = this.optimisationService.getLatestOptimisationForCampaignGroup(this.campaignGroup.id());
 
@@ -98,8 +97,8 @@ class OptimisationServiceTest {
         Mockito.when(this.campaignRepository.findByCampaignGroupId(optimisationDtoWithStatusNotApplied.campaignGroupId()))
                 .thenReturn(List.of(this.campaignDtoOne, this.campaignDtoTwo));
 
-        Mockito.when(optimisationRepository.findOptimisationDtoById_Named(this.optimisationDtoWithStatusNotApplied.id()))
-                .thenReturn(Optional.of(this.optimisationDtoWithStatusNotApplied));
+        Mockito.when(optimisationRepository.findById(this.optimisationWithStatusNotApplied.getId()))
+                .thenReturn(Optional.of(this.optimisationWithStatusNotApplied));
 
         List<RecommendationDto> actualRecommendations = this.optimisationService.getLatestRecommendations(this.optimisationDtoWithStatusNotApplied.id());
 

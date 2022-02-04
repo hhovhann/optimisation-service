@@ -6,6 +6,7 @@ import com.hhovhann.optimisationservice.model.dto.CampaignDto;
 import com.hhovhann.optimisationservice.model.dto.CampaignGroupDto;
 import com.hhovhann.optimisationservice.model.dto.OptimisationDto;
 import com.hhovhann.optimisationservice.model.dto.RecommendationDto;
+import com.hhovhann.optimisationservice.model.entity.Optimisation;
 import com.hhovhann.optimisationservice.repository.OptimisationRepository;
 import com.hhovhann.optimisationservice.service.OptimisationService;
 import org.junit.jupiter.api.BeforeEach;
@@ -45,6 +46,7 @@ class OptimisationControllerTest {
 
     private CampaignDto campaignDto;
 
+    private Optimisation optimisation;
     private OptimisationDto optimisationDto;
 
     private RecommendationDto recommendationDto;
@@ -53,7 +55,8 @@ class OptimisationControllerTest {
     public void setup() {
         this.campaignGroupDto = new CampaignGroupDto(1L, "Campaign Group One");
         this.campaignDto = new CampaignDto(1L, "Fist Campaign", this.campaignGroupDto.id(), BigDecimal.ONE, 123D, BigDecimal.TEN);
-        this.optimisationDto = new OptimisationDto(1L, this.campaignGroupDto.id(), OptimisationStatus.NOT_APPLIED.name());
+        this.optimisation = new Optimisation(1L, this.campaignGroupDto.id(), OptimisationStatus.NOT_APPLIED);
+        this.optimisationDto = new OptimisationDto(optimisation.getId(), this.campaignGroupDto.id(), OptimisationStatus.NOT_APPLIED.name());
         this.recommendationDto = new RecommendationDto(1L, this.campaignDto.id(), this.optimisationDto.id(), BigDecimal.TEN);
     }
 
@@ -84,7 +87,7 @@ class OptimisationControllerTest {
 
     @Test
     void givenOptimisationId_whenApplyRecommendation_thenCampaignBudgetUpdated() throws Exception {
-        given(this.optimisationRepository.findOptimisationDtoById_Named(any())).willReturn(of(this.optimisationDto));
+        given(this.optimisationRepository.findById(any())).willReturn(of(this.optimisation));
         given(this.optimisationService.getOptimisation(any())).willReturn(of(this.optimisationDto).orElseThrow(() -> new OptimisationNotFoundException("No optimisation found by provided id")));
         given(this.optimisationService.getLatestRecommendations(any())).willReturn(Collections.singletonList(this.recommendationDto));
         given(this.optimisationService.applyRecommendations(any(), any())).willReturn(1);

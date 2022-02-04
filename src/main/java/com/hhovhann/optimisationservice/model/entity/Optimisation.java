@@ -1,7 +1,6 @@
 package com.hhovhann.optimisationservice.model.entity;
 
 import com.hhovhann.optimisationservice.model.OptimisationStatus;
-import com.hhovhann.optimisationservice.model.dto.OptimisationDto;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -18,29 +17,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.Table;
-import javax.persistence.ColumnResult;
-import javax.persistence.ConstructorResult;
-import javax.persistence.NamedNativeQuery;
-import javax.persistence.SqlResultSetMapping;
 
-
-@NamedNativeQuery(
-        name = "Optimisation.findOptimisationDtoById_Named",
-        query = "SELECT optimisation.ID as id, optimisation.CAMPAIGN_GROUP_ID as campaignGroupId, optimisation.STATUS as status FROM OPTIMISATION optimisation WHERE id = :id",
-        resultSetMapping = "Mapping.OptimisationDto")
-@NamedNativeQuery(
-        name = "Optimisation.findOptimisationDtoByCampaignGroupIdOrderByIdDesc_Named",
-        query = "SELECT optimisation.ID as id, optimisation.CAMPAIGN_GROUP_ID as campaignGroupId, optimisation.STATUS as status FROM OPTIMISATION optimisation WHERE CAMPAIGN_GROUP_ID = :campaignGroupId",
-        resultSetMapping = "Mapping.OptimisationDto")
-@SqlResultSetMapping(
-        name = "Mapping.OptimisationDto",
-        classes = @ConstructorResult(
-                targetClass = OptimisationDto.class,
-                columns = {
-                        @ColumnResult(name = "id", type = Long.class),
-                        @ColumnResult(name = "campaignGroupId", type = Long.class),
-                        @ColumnResult(name = "status", type = String.class)
-                }))
 @Getter
 @Setter
 @Builder

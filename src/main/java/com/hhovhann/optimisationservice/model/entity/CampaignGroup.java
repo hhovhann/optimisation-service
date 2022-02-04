@@ -1,6 +1,5 @@
 package com.hhovhann.optimisationservice.model.entity;
 
-import com.hhovhann.optimisationservice.model.dto.CampaignGroupDto;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
