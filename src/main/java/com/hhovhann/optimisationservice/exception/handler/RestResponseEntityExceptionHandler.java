@@ -1,8 +1,6 @@
 package com.hhovhann.optimisationservice.exception.handler;
 
-import com.hhovhann.optimisationservice.exception.OptimisationServiceValidationException;
-import com.hhovhann.optimisationservice.exception.OptimisationNotFoundException;
-import com.hhovhann.optimisationservice.exception.PhotographerNotFoundException;
+import com.hhovhann.optimisationservice.exception.*;
 import com.hhovhann.optimisationservice.exception.model.ErrorResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -10,6 +8,7 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
+
 import java.util.List;
 
 @ControllerAdvice
@@ -26,7 +25,7 @@ public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionH
         return generateResponseEntity(ex, BAD_REQUEST, HttpStatus.BAD_REQUEST);
     }
 
-    @ExceptionHandler(value = {OptimisationNotFoundException.class, PhotographerNotFoundException.class})
+    @ExceptionHandler(value = {CampaignGroupNotFoundException.class, CampaignNotFoundException.class, OptimisationNotFoundException.class, RecommendationNotFoundException.class})
     protected ResponseEntity<Object> handleEntityNotFoundException(RuntimeException ex, WebRequest request) {
         return generateResponseEntity(ex, NOT_FOUND, HttpStatus.NOT_FOUND);
     }

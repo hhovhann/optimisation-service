@@ -2,12 +2,10 @@ package com.hhovhann.optimisationservice.service;
 
 import com.hhovhann.optimisationservice.mapper.RecommendationMapper;
 import com.hhovhann.optimisationservice.model.dto.RecommendationDto;
-import com.hhovhann.optimisationservice.model.entity.Recommendation;
 import com.hhovhann.optimisationservice.repository.RecommendationRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 public class RecommendationServiceImpl implements RecommendationService {
