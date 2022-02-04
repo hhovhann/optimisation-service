@@ -3,7 +3,7 @@ package com.hhovhann.optimisationservice.repository;
 import com.github.database.rider.core.api.configuration.DBUnit;
 import com.github.database.rider.core.api.dataset.DataSet;
 import com.github.database.rider.junit5.api.DBRider;
-import com.hhovhann.optimisationservice.model.dto.CampaignGroupDto;
+import com.hhovhann.optimisationservice.model.entity.CampaignGroup;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -23,10 +23,10 @@ class CampaignGroupRepositoryTest {
     @Test
     @DataSet(value = {"datasets/campaignGroup/campaignGroup.yml", "datasets/campaign/campaign.yml", "datasets/optimisation/optimisation.yml"})
     void shouldReturnAllCampaignGroupDto() {
-        List<CampaignGroupDto> campaignGroupDtos = campaignGroupRepository.findAllCampaignGroupDto_Named();
+        List<CampaignGroup> campaignGroupDtos = campaignGroupRepository.findAll();
 
         assertEquals(campaignGroupDtos.size(), 1);
-        assertEquals(campaignGroupDtos.get(0).id(), 1);
-        assertEquals(campaignGroupDtos.get(0).name(), "firstCampaigns");
+        assertEquals(campaignGroupDtos.get(0).getId(), 1);
+        assertEquals(campaignGroupDtos.get(0).getName(), "firstCampaigns");
     }
 }

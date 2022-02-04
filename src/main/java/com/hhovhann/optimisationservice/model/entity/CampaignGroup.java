@@ -10,15 +10,6 @@ import org.springframework.lang.NonNull;
 
 import javax.persistence.*;
 
-@NamedNativeQuery(
-        name = "CampaignGroup.findAllCampaignGroupDto_Named",
-        query = "SELECT campaignGroup.id as id, campaignGroup.name as name FROM CAMPAIGN_GROUP campaignGroup",
-        resultSetMapping = "Mapping.CampaignGroupDto")
-@SqlResultSetMapping(
-        name = "Mapping.CampaignGroupDto",
-        classes = @ConstructorResult(
-                targetClass = CampaignGroupDto.class,
-                columns = {@ColumnResult(name = "id", type = Long.class), @ColumnResult(name = "name", type = String.class)}))
 @Getter
 @Setter
 @Builder

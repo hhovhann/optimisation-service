@@ -1,10 +1,12 @@
 package com.hhovhann.optimisationservice.controller;
 
 import com.hhovhann.optimisationservice.exception.OptimisationNotFoundException;
+import com.hhovhann.optimisationservice.mapper.CampaignGroupMapper;
 import com.hhovhann.optimisationservice.model.OptimisationStatus;
 import com.hhovhann.optimisationservice.model.dto.CampaignDto;
 import com.hhovhann.optimisationservice.model.dto.CampaignGroupDto;
 import com.hhovhann.optimisationservice.model.dto.OptimisationDto;
+import com.hhovhann.optimisationservice.model.entity.CampaignGroup;
 import com.hhovhann.optimisationservice.repository.CampaignGroupRepository;
 import com.hhovhann.optimisationservice.repository.CampaignRepository;
 import com.hhovhann.optimisationservice.service.OptimisationService;
@@ -37,11 +39,15 @@ class CampaignGroupControllerTest {
     private CampaignGroupRepository campaignGroupRepository;
 
     @MockBean
+    private CampaignGroupMapper campaignGroupMapper;
+
+    @MockBean
     private CampaignRepository campaignRepository;
 
     @MockBean
     private OptimisationService optimisationService;
 
+    private CampaignGroup campaignGroup;
     private CampaignGroupDto campaignGroupDto;
 
     private CampaignDto campaignDto;
@@ -50,6 +56,7 @@ class CampaignGroupControllerTest {
 
     @BeforeEach
     public void setup() {
+        this.campaignGroup = new CampaignGroup(1L, "Campaign Group One");
         this.campaignGroupDto = new CampaignGroupDto(1L, "Campaign Group One");
         this.campaignDto = new CampaignDto(1L, "Fist Campaign", this.campaignGroupDto.id(), BigDecimal.ONE, 123D, BigDecimal.TEN);
         this.optimisationDto = new OptimisationDto(1L, this.campaignGroupDto.id(),OptimisationStatus.NOT_APPLIED.name());
@@ -67,7 +74,8 @@ class CampaignGroupControllerTest {
     @Test
     @DisplayName("Return campaign group when campaign group are provided")
     void givenCampaignGroups_whenGetCampaignGroups_thenReturnJsonArray() throws Exception {
-        given(this.campaignGroupRepository.findAllCampaignGroupDto_Named()).willReturn(Collections.singletonList(this.campaignGroupDto));
+        given(this.campaignGroupMapper.toDto(Collections.singletonList(this.campaignGroup))).willReturn(Collections.singletonList(this.campaignGroupDto));
+        given(this.campaignGroupRepository.findAll()).willReturn(Collections.singletonList(this.campaignGroup));
 
         mockMvc.perform(get("/api/v1/campaigngroups"))
                 .andDo(print())
@@ -79,6 +87,7 @@ class CampaignGroupControllerTest {
 
     @Test
     void givenCampaignGroupId_whenCampaignsForGroup_thenReturnJsonArray() throws Exception {
+        given(this.campaignGroupMapper.toDto(Collections.singletonList(this.campaignGroup))).willReturn(Collections.singletonList(this.campaignGroupDto));
         given(this.campaignRepository.findByCampaignGroupId(any())).willReturn(Collections.singletonList(this.campaignDto));
 
         mockMvc.perform(get("/api/v1/campaigngroups/{campaignGroupId}/campaigns", 1))
