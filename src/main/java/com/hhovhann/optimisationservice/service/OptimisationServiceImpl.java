@@ -69,11 +69,11 @@ public class OptimisationServiceImpl implements OptimisationService {
     }
 
     public List<RecommendationDto> generateLatestRecommendations(List<CampaignDto> campaign, OptimisationDto optimisation) {
-        double impressions = campaign.stream().mapToDouble(CampaignDto::impressions).sum();
+        BigDecimal impressions = BigDecimal.valueOf(campaign.stream().mapToDouble(CampaignDto::impressions).sum());
         BigDecimal budgets = campaign.stream().map(CampaignDto::budget).reduce(BigDecimal.ZERO, BigDecimal::add);
 
         return campaign.stream().map(
-                currentCampaign -> new RecommendationDto(null, currentCampaign.id(), optimisation.id(), calculateRecommendedBudget(budgets, currentCampaign.impressions(), impressions))
+                currentCampaign -> new RecommendationDto(null, currentCampaign.id(), optimisation.id(), calculateRecommendedBudget(budgets, BigDecimal.valueOf(currentCampaign.impressions()), impressions))
         ).collect(Collectors.toList());
     }
 
@@ -91,7 +91,7 @@ public class OptimisationServiceImpl implements OptimisationService {
         return rowsUpdated.get();
     }
 
-    private BigDecimal calculateRecommendedBudget(BigDecimal sumOfBudgets, double campaignImpressions, double sumOfImpressions) {
-        return sumOfBudgets.multiply(BigDecimal.valueOf(campaignImpressions / sumOfImpressions));
+    private BigDecimal calculateRecommendedBudget(BigDecimal sumOfBudgets, BigDecimal campaignImpressions, BigDecimal sumOfImpressions) {
+        return sumOfBudgets.multiply(campaignImpressions.divide(sumOfImpressions));
     }
 }
