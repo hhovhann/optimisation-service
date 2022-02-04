@@ -8,7 +8,7 @@ import java.util.Optional;
 
 public interface OptimisationService {
 
-    Optional<OptimisationDto> getOptimisation(Long optimisationId);
+    OptimisationDto getOptimisation(Long optimisationId);
 
     Optional<OptimisationDto> getLatestOptimisationForCampaignGroup(Long campaignGroupId);
 

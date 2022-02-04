@@ -37,15 +37,13 @@ public class OptimisationController {
     @ResponseBody
     @PostMapping(value = "/optimisations/{optimisationId}/recommendations", produces = APPLICATION_JSON_VALUE)
     public ResponseEntity<Map<String, String>> applyLatestRecommendation(@PathVariable Long optimisationId) {
-        Optional<OptimisationDto> optimisation = optimisationService.getOptimisation(optimisationId);
-        if (optimisation.isEmpty()) {
-            return ResponseEntity.notFound().build();
-        } else if (Objects.equals(APPLIED.name(), optimisation.get().status())) {
+        OptimisationDto optimisation = optimisationService.getOptimisation(optimisationId);
+        if (Objects.equals(APPLIED.name(), optimisation.status())) {
             return ResponseEntity.ok().build();
         }
 
         List<RecommendationDto> recommendations = this.optimisationService.getLatestRecommendations(optimisationId);
-        var updatedCampaignsCount = this.optimisationService.applyRecommendations(recommendations, optimisation.get());
+        var updatedCampaignsCount = this.optimisationService.applyRecommendations(recommendations, optimisation);
 
         return ResponseEntity.ok().body(Map.of("message", "Updated Campaigns " + updatedCampaignsCount));
     }

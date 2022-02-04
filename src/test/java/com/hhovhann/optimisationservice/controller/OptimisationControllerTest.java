@@ -1,5 +1,6 @@
 package com.hhovhann.optimisationservice.controller;
 
+import com.hhovhann.optimisationservice.exception.OptimisationNotFoundException;
 import com.hhovhann.optimisationservice.model.OptimisationStatus;
 import com.hhovhann.optimisationservice.model.dto.CampaignDto;
 import com.hhovhann.optimisationservice.model.dto.CampaignGroupDto;
@@ -84,7 +85,7 @@ class OptimisationControllerTest {
     @Test
     void givenOptimisationId_whenApplyRecommendation_thenCampaignBudgetUpdated() throws Exception {
         given(this.optimisationRepository.findOptimisationDtoById_Named(any())).willReturn(of(this.optimisationDto));
-        given(this.optimisationService.getOptimisation(any())).willReturn(of(this.optimisationDto));
+        given(this.optimisationService.getOptimisation(any())).willReturn(of(this.optimisationDto).orElseThrow(() -> new OptimisationNotFoundException("No optimisation found by provided id")));
         given(this.optimisationService.getLatestRecommendations(any())).willReturn(Collections.singletonList(this.recommendationDto));
         given(this.optimisationService.applyRecommendations(any(), any())).willReturn(1);
 

@@ -71,7 +71,7 @@ class OptimisationServiceTest {
     void givenOptimisation_whenGetOptimisation_thenReturnExistingOptimisation() {
         OptimisationDto expectedOptimisation = this.optimisationDtoWithStatusApplied;
         Mockito.when(optimisationRepository.findOptimisationDtoById_Named(this.optimisationDtoWithStatusApplied.id())).thenReturn(Optional.of(this.optimisationDtoWithStatusApplied));
-        OptimisationDto actualOptimisation = this.optimisationService.getOptimisation(this.optimisationDtoWithStatusApplied.id()).get();
+        OptimisationDto actualOptimisation = this.optimisationService.getOptimisation(this.optimisationDtoWithStatusApplied.id());
 
         assertEquals(expectedOptimisation.id(), actualOptimisation.id());
         assertEquals(expectedOptimisation.campaignGroupId(), actualOptimisation.campaignGroupId());

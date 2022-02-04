@@ -1,5 +1,6 @@
 package com.hhovhann.optimisationservice.service;
 
+import com.hhovhann.optimisationservice.exception.OptimisationNotFoundException;
 import com.hhovhann.optimisationservice.model.dto.CampaignDto;
 import com.hhovhann.optimisationservice.model.dto.OptimisationDto;
 import com.hhovhann.optimisationservice.model.dto.RecommendationDto;
@@ -37,8 +38,10 @@ public class OptimisationServiceImpl implements OptimisationService {
     }
 
     @Override
-    public Optional<OptimisationDto> getOptimisation(Long optimisationId) {
-        return optimisationRepository.findOptimisationDtoById_Named(optimisationId);
+    public OptimisationDto getOptimisation(Long optimisationId) {
+        return optimisationRepository
+                .findOptimisationDtoById_Named(optimisationId)
+                .orElseThrow(() -> new OptimisationNotFoundException("No optimisation found by provided id"));
     }
 
     @Override
