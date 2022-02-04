@@ -286,4 +286,5 @@ Feel free if you want to use [OpenAPI Client](http://localhost:8888/swagger-ui/i
 - Test Container integrations
 - Add more test cases to cover all business logic
 - May have csv data processor (DataProcessorFactory and proper implementations for csv, xml, etc), which may take csv file and seed the database now we have that part extracted in script which using flyway
+- Add oneToMany, manyToOne relations and restructure entities
 - And many more which will improve this nice application :)
