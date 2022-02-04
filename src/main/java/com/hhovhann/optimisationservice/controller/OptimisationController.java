@@ -34,7 +34,7 @@ public class OptimisationController {
     public ResponseEntity<Map<String, String>> applyLatestRecommendation(@PathVariable Long optimisationId) {
         OptimisationDto optimisation = optimisationService.getOptimisation(optimisationId);
         if (Objects.equals(APPLIED.name(), optimisation.status())) {
-            return ResponseEntity.ok().build();
+            return ResponseEntity.ok().body(Map.of("message", "No updated Campaigns"));
         }
 
         List<RecommendationDto> recommendations = this.optimisationService.getLatestRecommendations(optimisationId);
