@@ -1,5 +1,6 @@
 package com.hhovhann.optimisationservice.service;
 
+import com.hhovhann.optimisationservice.mapper.RecommendationMapper;
 import com.hhovhann.optimisationservice.model.dto.RecommendationDto;
 import com.hhovhann.optimisationservice.model.entity.Recommendation;
 import com.hhovhann.optimisationservice.repository.RecommendationRepository;
@@ -11,22 +12,15 @@ import java.util.stream.Collectors;
 @Service
 public class RecommendationServiceImpl implements RecommendationService {
     private final RecommendationRepository recommendationRepository;
+    private final RecommendationMapper recommendationMapper;
 
-    public RecommendationServiceImpl(RecommendationRepository recommendationRepository) {
+    public RecommendationServiceImpl(RecommendationRepository recommendationRepository, RecommendationMapper recommendationMapper) {
         this.recommendationRepository = recommendationRepository;
+        this.recommendationMapper = recommendationMapper;
     }
 
     @Override
-    public void storeRecommendations(List<RecommendationDto> recommendations) {
-        List<Recommendation> recommendationList = recommendations
-                .stream()
-                .map(recommendationDto -> Recommendation.builder()
-                        .id(recommendationDto.id())
-                        .campaignId(recommendationDto.campaignId())
-                        .optimisationId(recommendationDto.optimisationId())
-                        .recommendedBudget(recommendationDto.recommendedBudget())
-                        .build())
-                .collect(Collectors.toList());
-        this.recommendationRepository.saveAll(recommendationList);
+    public void storeRecommendations(List<RecommendationDto> recommendationDtos) {
+        this.recommendationRepository.saveAll(recommendationMapper.toEntity(recommendationDtos));
     }
 }
