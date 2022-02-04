@@ -6,13 +6,12 @@ import com.hhovhann.optimisationservice.model.dto.OptimisationDto;
 import com.hhovhann.optimisationservice.service.CampaignGroupService;
 import com.hhovhann.optimisationservice.service.CampaignService;
 import com.hhovhann.optimisationservice.service.OptimisationService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.RequestMapping;
 
 import java.util.List;
 
@@ -26,7 +25,6 @@ public class CampaignGroupController {
     private final CampaignGroupService campaignGroupService;
     private final OptimisationService optimisationService;
 
-    @Autowired
     public CampaignGroupController(CampaignService campaignService,
                                    CampaignGroupService campaignGroupService,
                                    OptimisationService optimisationService) {

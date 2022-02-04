@@ -8,7 +8,6 @@ import com.hhovhann.optimisationservice.model.dto.RecommendationDto;
 import com.hhovhann.optimisationservice.model.entity.Optimisation;
 import com.hhovhann.optimisationservice.repository.CampaignRepository;
 import com.hhovhann.optimisationservice.repository.OptimisationRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -29,7 +28,6 @@ public class OptimisationServiceImpl implements OptimisationService {
     private final RecommendationService recommendationService;
     private final CampaignService campaignService;
 
-    @Autowired
     public OptimisationServiceImpl(OptimisationRepository optimisationRepository, CampaignRepository campaignRepository, RecommendationService recommendationService, CampaignService campaignService) {
         this.optimisationRepository = optimisationRepository;
         this.campaignRepository = campaignRepository;

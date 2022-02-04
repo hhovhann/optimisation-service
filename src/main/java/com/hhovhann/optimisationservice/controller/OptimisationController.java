@@ -3,7 +3,6 @@ package com.hhovhann.optimisationservice.controller;
 import com.hhovhann.optimisationservice.model.dto.OptimisationDto;
 import com.hhovhann.optimisationservice.model.dto.RecommendationDto;
 import com.hhovhann.optimisationservice.service.OptimisationService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -20,7 +19,6 @@ public class OptimisationController {
 
     private final OptimisationService optimisationService;
 
-    @Autowired
     public OptimisationController(OptimisationService optimisationService) {
         this.optimisationService = optimisationService;
     }
