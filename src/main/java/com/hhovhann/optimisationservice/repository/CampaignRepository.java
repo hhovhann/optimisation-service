@@ -15,7 +15,7 @@ import java.util.List;
 @Repository
 public interface CampaignRepository extends JpaRepository<Campaign, Long> {
 
-    List<CampaignDto> findByCampaignGroupId(Long campaignGroupId);
+    List<Campaign> findByCampaignGroupId(Long campaignGroupId);
 
     @Modifying
     @Transactional

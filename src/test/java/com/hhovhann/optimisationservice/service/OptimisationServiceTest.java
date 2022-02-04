@@ -5,6 +5,7 @@ import com.hhovhann.optimisationservice.model.dto.CampaignDto;
 import com.hhovhann.optimisationservice.model.dto.CampaignGroupDto;
 import com.hhovhann.optimisationservice.model.dto.OptimisationDto;
 import com.hhovhann.optimisationservice.model.dto.RecommendationDto;
+import com.hhovhann.optimisationservice.model.entity.Campaign;
 import com.hhovhann.optimisationservice.model.entity.Optimisation;
 import com.hhovhann.optimisationservice.repository.CampaignRepository;
 import com.hhovhann.optimisationservice.repository.OptimisationRepository;
@@ -46,6 +47,7 @@ class OptimisationServiceTest {
     private Optimisation optimisationWithStatusApplied, optimisationWithStatusNotApplied;
     private OptimisationDto optimisationDtoWithStatusApplied, optimisationDtoWithStatusNotApplied;
     private RecommendationDto recommendationDtoOne, recommendationDtoTwo;
+    private Campaign campaignOne, campaignTwo;
     private CampaignDto campaignDtoOne, campaignDtoTwo;
     private CampaignGroupDto campaignGroup;
 
@@ -53,8 +55,11 @@ class OptimisationServiceTest {
     public void setup() {
         this.campaignGroup = new CampaignGroupDto(1L, "Campaign Group One");
 
-        this.campaignDtoOne = new CampaignDto(1L, "Fist Campaign", this.campaignGroup.id(), BigDecimal.TEN, 10D, BigDecimal.TEN);
-        this.campaignDtoTwo = new CampaignDto(2L, "Second Campaign", this.campaignGroup.id(), BigDecimal.TEN, 40D, BigDecimal.TEN);
+        this.campaignOne = new Campaign(1L, "Fist Campaign", this.campaignGroup.id(), BigDecimal.TEN, 10D, BigDecimal.TEN);
+        this.campaignTwo = new Campaign(2L, "Second Campaign", this.campaignGroup.id(), BigDecimal.TEN, 40D, BigDecimal.TEN);
+
+        this.campaignDtoOne = new CampaignDto(campaignOne.getId(), campaignOne.getName(), this.campaignGroup.id(), campaignOne.getBudget(), campaignOne.getImpressions(), campaignOne.getRevenue());
+        this.campaignDtoTwo = new CampaignDto(campaignTwo.getId(), campaignTwo.getName(), this.campaignGroup.id(), campaignTwo.getBudget(), campaignTwo.getImpressions(), campaignTwo.getRevenue());
 
         this.optimisationDtoWithStatusApplied = new OptimisationDto(1L, this.campaignGroup.id(), APPLIED.name());
         this.optimisationDtoWithStatusNotApplied = new OptimisationDto(2L, this.campaignGroup.id(), NOT_APPLIED.name());
@@ -95,7 +100,7 @@ class OptimisationServiceTest {
         List<RecommendationDto> expectedRecommendations = List.of(this.recommendationDtoOne, this.recommendationDtoTwo);
 
         Mockito.when(this.campaignRepository.findByCampaignGroupId(optimisationDtoWithStatusNotApplied.campaignGroupId()))
-                .thenReturn(List.of(this.campaignDtoOne, this.campaignDtoTwo));
+                .thenReturn(List.of(this.campaignOne, this.campaignTwo));
 
         Mockito.when(optimisationRepository.findById(this.optimisationWithStatusNotApplied.getId()))
                 .thenReturn(Optional.of(this.optimisationWithStatusNotApplied));

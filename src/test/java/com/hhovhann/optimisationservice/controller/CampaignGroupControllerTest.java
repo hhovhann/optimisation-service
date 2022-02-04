@@ -6,6 +6,7 @@ import com.hhovhann.optimisationservice.model.OptimisationStatus;
 import com.hhovhann.optimisationservice.model.dto.CampaignDto;
 import com.hhovhann.optimisationservice.model.dto.CampaignGroupDto;
 import com.hhovhann.optimisationservice.model.dto.OptimisationDto;
+import com.hhovhann.optimisationservice.model.entity.Campaign;
 import com.hhovhann.optimisationservice.model.entity.CampaignGroup;
 import com.hhovhann.optimisationservice.repository.CampaignGroupRepository;
 import com.hhovhann.optimisationservice.repository.CampaignRepository;
@@ -21,6 +22,7 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import java.math.BigDecimal;
 import java.util.Collections;
+
 import static org.hamcrest.Matchers.is;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
@@ -50,6 +52,7 @@ class CampaignGroupControllerTest {
     private CampaignGroup campaignGroup;
     private CampaignGroupDto campaignGroupDto;
 
+    private Campaign campaign;
     private CampaignDto campaignDto;
 
     private OptimisationDto optimisationDto;
@@ -58,8 +61,9 @@ class CampaignGroupControllerTest {
     public void setup() {
         this.campaignGroup = new CampaignGroup(1L, "Campaign Group One");
         this.campaignGroupDto = new CampaignGroupDto(1L, "Campaign Group One");
-        this.campaignDto = new CampaignDto(1L, "Fist Campaign", this.campaignGroupDto.id(), BigDecimal.ONE, 123D, BigDecimal.TEN);
-        this.optimisationDto = new OptimisationDto(1L, this.campaignGroupDto.id(),OptimisationStatus.NOT_APPLIED.name());
+        this.campaign = new Campaign(1L, "Fist Campaign", this.campaignGroupDto.id(), BigDecimal.ONE, 123D, BigDecimal.TEN);
+        this.campaignDto = new CampaignDto(campaign.getId(), campaign.getName(), this.campaignGroupDto.id(), campaign.getBudget(), campaign.getImpressions(), campaign.getRevenue());
+        this.optimisationDto = new OptimisationDto(1L, this.campaignGroupDto.id(), OptimisationStatus.NOT_APPLIED.name());
     }
 
     @Test
@@ -88,7 +92,7 @@ class CampaignGroupControllerTest {
     @Test
     void givenCampaignGroupId_whenCampaignsForGroup_thenReturnJsonArray() throws Exception {
         given(this.campaignGroupMapper.toDto(Collections.singletonList(this.campaignGroup))).willReturn(Collections.singletonList(this.campaignGroupDto));
-        given(this.campaignRepository.findByCampaignGroupId(any())).willReturn(Collections.singletonList(this.campaignDto));
+        given(this.campaignRepository.findByCampaignGroupId(any())).willReturn(Collections.singletonList(this.campaign));
 
         mockMvc.perform(get("/api/v1/campaigngroups/{campaignGroupId}/campaigns", 1))
                 .andDo(print())

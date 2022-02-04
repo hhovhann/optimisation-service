@@ -26,11 +26,11 @@ class CampaignRepositoryTest {
     @Test
     @DataSet("datasets/campaign/campaigns.yml")
     void findByCampaignGroupId() {
-        List<CampaignDto> campaigns = campaignRepository.findByCampaignGroupId(1L);
+        List<Campaign> campaigns = campaignRepository.findByCampaignGroupId(1L);
 
         assertEquals(campaigns.size(), 2);
-        assertEquals(campaigns.get(0).campaignGroupId(), 1);
-        assertEquals(campaigns.get(1).campaignGroupId(), 1);
+        assertEquals(campaigns.get(0).getCampaignGroupId(), 1);
+        assertEquals(campaigns.get(1).getCampaignGroupId(), 1);
     }
 
     @Test
